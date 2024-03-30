@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/bicycle_store_frontend/static/css/main.8f07138d.css",
+    "main.js": "/bicycle_store_frontend/static/js/main.1d13cdfc.js",
+    "static/js/453.3bbcf3ca.chunk.js": "/bicycle_store_frontend/static/js/453.3bbcf3ca.chunk.js",
+    "static/media/about_us-1.jpg": "/bicycle_store_frontend/static/media/about_us-1.e8444b40613eea393432.jpg",
+    "static/media/slider-02.png": "/bicycle_store_frontend/static/media/slider-02.23b0f91c9761ee0cc725.png",
+    "static/media/slider-01.png": "/bicycle_store_frontend/static/media/slider-01.778fec9a3ffcde1bd303.png",
+    "static/media/slick.svg": "/bicycle_store_frontend/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/bicycle_store_frontend/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/bicycle_store_frontend/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/bicycle_store_frontend/static/media/slick.295183786cd8a1389865.woff",
+    "index.html": "/bicycle_store_frontend/index.html",
+    "main.8f07138d.css.map": "/bicycle_store_frontend/static/css/main.8f07138d.css.map",
+    "main.1d13cdfc.js.map": "/bicycle_store_frontend/static/js/main.1d13cdfc.js.map",
+    "453.3bbcf3ca.chunk.js.map": "/bicycle_store_frontend/static/js/453.3bbcf3ca.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8f07138d.css",
+    "static/js/main.1d13cdfc.js"
+  ]
+}
