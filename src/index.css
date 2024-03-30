@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+.header-nav-item {
+  @apply relative mx-3 py-1 text-medium font-semibold before:absolute before:left-0  before:top-0 before:h-[3px] before:w-0 before:transition-all before:duration-1000 hover:text-pri hover:before:w-full hover:before:bg-pri active:border-t-pri;
+}
+
+.header-nav-item-bar {
+  @apply block w-full cursor-pointer px-2 py-2 text-medium font-semibold;
+}
+
+.header-icon {
+  @apply mx-3 cursor-pointer transition-all hover:text-pri;
+}
+
+.header-icon-not-xxl {
+  @apply flex w-1/2 cursor-pointer items-center justify-center bg-black py-2 text-white transition-all hover:text-pri;
+}
+
+/* Carosuel */
+.slick-next {
+  display: none !important;
+}
+
+.slick-prev {
+  display: none;
+}

@@ -1,16 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import GlobalStyle from './styles/GlobalStyle';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import GlobalStyle from "./styles/GlobalStyle";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./index.css";
+import { NextUIProvider } from "@nextui-org/react";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    <React.StrictMode>
-        <GlobalStyle>
-            <App />
-        </GlobalStyle>
-    </React.StrictMode>,
+  <React.StrictMode>
+    <NextUIProvider>
+      <GlobalStyle>
+        <App />
+      </GlobalStyle>
+    </NextUIProvider>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

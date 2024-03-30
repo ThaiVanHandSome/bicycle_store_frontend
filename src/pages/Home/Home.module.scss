@@ -1,0 +1,109 @@
+.finish {
+  opacity: 1;
+  transform: translateX(0);
+  transform: translateY(0);
+  transition: all 0.5s;
+}
+
+.image-appear {
+  opacity: 1;
+  animation: imageAppear linear 700ms;
+  animation-delay: 300ms;
+}
+
+.subtitle-appear {
+  opacity: 1;
+  animation: textAppear linear 500ms;
+  animation-delay: 600ms;
+}
+
+.title-appear {
+  opacity: 1;
+  animation: textAppear linear 500ms;
+  animation-delay: 900ms;
+}
+
+.desc1-appear {
+  opacity: 1;
+  animation: textAppear linear 500ms;
+  animation-delay: 1200ms;
+}
+
+.desc2-appear {
+  animation: textAppear linear 500ms;
+  animation-delay: 1500ms;
+  opacity: 1;
+}
+
+.btn-appear {
+  animation: btnAppear linear 700ms;
+  animation-delay: 1000ms;
+  opacity: 1;
+}
+
+.captionMONA-appear {
+  animation: captionMONAAppear linear 700ms;
+  animation-delay: 0ms;
+  opacity: 1;
+}
+
+.captionBICYCLES-appear {
+  animation: captionBICYCLESAppear linear 700ms;
+  animation-delay: 0ms;
+  opacity: 1;
+}
+
+@keyframes btnAppear {
+  0% {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes captionMONAAppear {
+  0% {
+    left: 80%;
+    opacity: 0;
+  }
+  100% {
+    left: 70%;
+    opacity: 0.1;
+  }
+}
+
+@keyframes captionBICYCLESAppear {
+  0% {
+    left: 10%;
+    opacity: 0;
+  }
+  100% {
+    left: 20%;
+    opacity: 0.1;
+  }
+}
+
+@keyframes imageAppear {
+  0% {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes textAppear {
+  0% {
+    transform: translateY(-32px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
