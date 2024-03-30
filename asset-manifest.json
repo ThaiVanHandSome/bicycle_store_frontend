@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/bicycle_store_frontend/static/css/main.8f07138d.css",
-    "main.js": "/bicycle_store_frontend/static/js/main.1d13cdfc.js",
+    "main.js": "/bicycle_store_frontend/static/js/main.c99799eb.js",
     "static/js/453.3bbcf3ca.chunk.js": "/bicycle_store_frontend/static/js/453.3bbcf3ca.chunk.js",
     "static/media/about_us-1.jpg": "/bicycle_store_frontend/static/media/about_us-1.e8444b40613eea393432.jpg",
     "static/media/slider-02.png": "/bicycle_store_frontend/static/media/slider-02.23b0f91c9761ee0cc725.png",
@@ -12,11 +12,11 @@
     "static/media/slick.woff": "/bicycle_store_frontend/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/bicycle_store_frontend/index.html",
     "main.8f07138d.css.map": "/bicycle_store_frontend/static/css/main.8f07138d.css.map",
-    "main.1d13cdfc.js.map": "/bicycle_store_frontend/static/js/main.1d13cdfc.js.map",
+    "main.c99799eb.js.map": "/bicycle_store_frontend/static/js/main.c99799eb.js.map",
     "453.3bbcf3ca.chunk.js.map": "/bicycle_store_frontend/static/js/453.3bbcf3ca.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.8f07138d.css",
-    "static/js/main.1d13cdfc.js"
+    "static/js/main.c99799eb.js"
   ]
 }
