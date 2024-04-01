@@ -28,3 +28,16 @@
 .slick-prev {
   display: none;
 }
+
+/* Footer */
+.footer-block {
+  @apply mb-4 flex w-full flex-col items-center p-2 md:w-1/2 lg:mb-0 lg:w-1/4;
+}
+
+.footer-heading {
+  @apply mb-3 text-center text-lg font-bold;
+}
+
+.footer-link {
+  @apply mb-2 block transition-all hover:font-semibold hover:text-pri;
+}

@@ -18,7 +18,6 @@ import { Drawer } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
-import routes from "~/config/routes";
 import { getAllCategories } from "~/services/apiServices/Category";
 
 function Header() {
@@ -42,7 +41,7 @@ function Header() {
   };
 
   return (
-    <section className="fixed left-0 right-0 top-0 z-10 min-h-[60px] bg-white xl:min-h-[100px] xl:shadow-lg">
+    <section className="fixed left-0 right-0 top-0 z-30 min-h-[60px] bg-white xl:min-h-[100px] xl:shadow-lg">
       <div className="flex h-full w-full items-center justify-between px-[36px] xl:px-[64px]">
         {/* Bar */}
         <div className="header-icon xl:hidden" onClick={showDrawer}>

@@ -107,3 +107,12 @@
     opacity: 1;
   }
 }
+
+// ------------------------
+.truncate-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 2; /* Số dòng tối đa bạn muốn hiển thị */
+}

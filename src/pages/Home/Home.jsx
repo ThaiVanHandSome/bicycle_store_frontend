@@ -1,23 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./Home.module.scss";
 import classNames from "classnames/bind";
 import SliderItem from "./SliderItem";
 import silder_data from "~/assets/static_data/slider_data";
-import {
-  Card,
-  CardFooter,
-  Image,
-  Progress,
-  Spinner,
-  Tab,
-  Tabs,
-  select,
-} from "@nextui-org/react";
+import { Card, CardBody, Image, Spinner, Tab, Tabs } from "@nextui-org/react";
 import ButtonCustom from "~/components/ButtonCustom";
 import {
   getAllBicyclesByCategory,
   getAllCategories,
 } from "~/services/apiServices/Category";
+import formatToVND from "~/utils/formatToVND";
+import { Link } from "react-router-dom";
+import brand_data from "~/assets/static_data/brand_data";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { transform } from "framer-motion";
+import clsx from "clsx";
 
 const cx = classNames.bind(styles);
 
@@ -25,11 +22,17 @@ function Home() {
   const [slider, setSlider] = useState(0);
   const [categories, setAllCategories] = useState([]);
   const [bicyclesOfCategory, setBicyclesOfCategory] = useState([]);
-  const [categoryActive, setCategoryActive] = useState(1);
   const [loadingSuccessful, setLoadingSuccessful] = useState(false);
   const [loadingBicycle, setLoadingBicycle] = useState(false);
+  const [isViewedBicycles, setIsViewedBicycles] = useState([]);
 
   const mapping = useRef({});
+  const aboutUsImageRef = useRef(null);
+  const aboutUsContentRef = useRef(null);
+  const bicycleRefs = useRef([]);
+  const brandRefs = useRef([]);
+  const bgImageRef = useRef(null);
+  const btnMoreRef = useRef(null);
 
   const sliderPresentTime = 10000;
 
@@ -43,7 +46,7 @@ function Home() {
   }, []);
 
   const handleGetAllCategories = async () => {
-    const categories = await getAllCategories();
+    const categories = (await getAllCategories()) || [];
     const obj = {};
     categories.forEach((category, index) => {
       obj[index] = category.idBicycleCategory;
@@ -61,17 +64,117 @@ function Home() {
 
   const handleGetBicyclesByCategory = async (idBicycleCategory) => {
     setLoadingBicycle(false);
-    const bicycles = await getAllBicyclesByCategory(idBicycleCategory);
+    let bicycles = await getAllBicyclesByCategory(idBicycleCategory);
+    bicycles = bicycles.length > 6 ? bicycles.slice(0, 6) : bicycles;
+    bicycleRefs.current = Array(Math.min(bicycles.length, 6))
+      .fill()
+      .map((_, i) => bicycleRefs.current[i] || React.createRef());
     setLoadingBicycle(true);
     setBicyclesOfCategory(bicycles);
   };
 
   useEffect(() => {
     handleGetDataWhenLoadPage();
+    brandRefs.current = Array(brand_data.length)
+      .fill()
+      .map((_, i) => brandRefs.current[i] || React.createRef());
   }, []);
 
+  const handleAboutUsImage = () => {
+    if (!aboutUsImageRef.current) return;
+    const aboutUsImagePostion =
+      aboutUsImageRef.current.getBoundingClientRect().top;
+    if (aboutUsImagePostion < window.innerHeight - 100) {
+      aboutUsImageRef.current.classList.add("transition-all");
+      aboutUsImageRef.current.style.transform = "translateY(0)";
+      aboutUsImageRef.current.style.opacity = "1";
+      aboutUsImageRef.current.style.transitionDuration = "1000ms";
+    }
+  };
+
+  const handleBtnMore = () => {
+    if (!btnMoreRef.current) return;
+    const aboutUsImagePostion = btnMoreRef.current.getBoundingClientRect().top;
+    if (aboutUsImagePostion < window.innerHeight - 100) {
+      btnMoreRef.current.classList.add("transition-all");
+      btnMoreRef.current.style.transform = "translateY(0)";
+      btnMoreRef.current.style.opacity = "1";
+      btnMoreRef.current.style.transitionDuration = "1000ms";
+    }
+  };
+
+  const handleBgImage = () => {
+    if (!bgImageRef.current) return;
+    const aboutUsImagePostion = bgImageRef.current.getBoundingClientRect().top;
+    if (aboutUsImagePostion < window.innerHeight - 100) {
+      bgImageRef.current.classList.add("transition-all");
+      bgImageRef.current.style.opacity = "1";
+      bgImageRef.current.style.transitionDuration = "1000ms";
+    }
+  };
+
+  const handleAboutUsContent = () => {
+    if (!aboutUsContentRef.current) return;
+    const aboutUsImagePostion =
+      aboutUsContentRef.current.getBoundingClientRect().top;
+    if (aboutUsImagePostion < window.innerHeight - 100) {
+      aboutUsContentRef.current.classList.add("transition-all");
+      aboutUsContentRef.current.style.transform = "translateX(0)";
+      aboutUsContentRef.current.style.opacity = "1";
+      aboutUsContentRef.current.style.transitionDuration = "1000ms";
+    }
+  };
+
+  const handleBicycleRefs = () => {
+    bicycleRefs.current.forEach((bicycle, index) => {
+      if (!bicycle.current) return;
+      const aboutUsImagePostion = bicycle.current.getBoundingClientRect().top;
+      if (aboutUsImagePostion < window.innerHeight - 100) {
+        bicycle.current.classList.add("transition-all");
+        bicycle.current.style.transform = "translateY(0)";
+        bicycle.current.style.opacity = "1";
+        bicycle.current.style.transitionDuration = "1000ms";
+        setIsViewedBicycles((prev) => [...prev, index]);
+      }
+    });
+  };
+
+  const handleBrandRefs = () => {
+    brandRefs.current.forEach((brand, index) => {
+      if (!brand.current) return;
+      const aboutUsImagePostion = brand.current.getBoundingClientRect().top;
+      if (aboutUsImagePostion < window.innerHeight - 100) {
+        brand.current.classList.add("transition-all");
+        brand.current.style.transform = "translateY(0)";
+        brand.current.style.opacity = "1";
+        brand.current.style.transitionDuration = "1000ms";
+      }
+    });
+  };
+
+  const handleSelectionChange = (selectedId) => {
+    handleGetBicyclesByCategory(mapping.current.value[selectedId]);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleAboutUsImage);
+    window.addEventListener("scroll", handleAboutUsContent);
+    window.addEventListener("scroll", handleBicycleRefs);
+    window.addEventListener("scroll", handleBrandRefs);
+    window.addEventListener("scroll", handleBgImage);
+    window.addEventListener("scroll", handleBtnMore);
+    return () => {
+      window.removeEventListener("scroll", handleAboutUsImage);
+      window.removeEventListener("scroll", handleAboutUsContent);
+      window.removeEventListener("scroll", handleBicycleRefs);
+      window.removeEventListener("scroll", handleBrandRefs);
+      window.removeEventListener("scroll", handleBgImage);
+      window.removeEventListener("scroll", handleBtnMore);
+    };
+  }, [loadingSuccessful]);
+
   return (
-    <section className="xl:mt-[100px relative mt-[94px] min-h-[100vh]">
+    <section className="relative mt-[94px] min-h-[100vh] xl:mt-[100px]">
       {loadingSuccessful && (
         <>
           <section
@@ -85,69 +188,70 @@ function Home() {
           </section>
 
           <section className="about-us px-1 py-12 sm:px-5 md:px-20 xl:px-60">
-            <h1
-              className="mb-14 mt-12 text-center text-5xl font-bold"
-              style={{ fontFamily: '"Montserrat", sans-serif' }}
-            >
+            <h1 className="mb-14 mt-12 text-center font-sans text-5xl font-bold">
               Về Chúng Tôi
             </h1>
             <div className="flex flex-col items-center lg:flex-row lg:items-start">
               <img
+                ref={aboutUsImageRef}
                 alt="about-us"
-                src={require("~/assets/images/about_us/about_us-1.jpg")}
-                className="w-full px-4 lg:w-1/2 lg:px-0"
+                src={require("~/assets/images/about_us/about_us-3.jpg")}
+                className="w-full translate-y-16 px-4 opacity-0 lg:w-1/2 lg:px-0"
                 style={{
                   clipPath:
                     "polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%)",
                 }}
               />
-              <div className="px-8">
-                <p className="mb-4 mt-10 text-justify text-medium leading-relaxed">
-                  <b className="text-pri">MONA</b> cung cấp bánh xe carbon chắc
-                  chắn, nhẹ, bền cho mọi điều kiện—bao gồm xe đạp điện, xe leo
-                  núi và xe đường phố
-                </p>
-                <h2 className="mb-1 text-xl font-bold text-pri">
-                  Chúng tôi cung cấp hướng dẫn tốt nhất cho bạn
-                </h2>
-                <p className="mb-4 text-justify text-medium leading-relaxed">
-                  Xe đạp nói riêng và các hoạt động thể chất ngoài trời nói
-                  chung là vô cùng cần thiết cho sự phát triển toàn diện của các
-                  bạn nhỏ cũng như người trưởng thành. Vận động không chỉ giúp
-                  nâng cao sức khỏe chống lại bệnh tật, mà còn giúp chúng ta có
-                  tinh thần hăng hái, học tập và làm việc hiệu quả hơn.
-                </p>
-                <h2 className="mb-1 text-xl font-bold text-pri">
-                  Mục tiêu của chúng tôi
-                </h2>
-                <p className="mb-4 text-justify text-medium leading-relaxed">
-                  Đạt chất lượng cao với giá thành hợp lý. Mở rộng thị trường
-                  với các dự án xuất khẩu ra nước ngoài.
-                </p>
-                <div className="flex items-center justify-center lg:block">
-                  <ButtonCustom radius="md" size="lg">
-                    Đọc Thêm
-                  </ButtonCustom>
+              <div className=" overflow-hidden px-8">
+                <div
+                  ref={aboutUsContentRef}
+                  className="translate-x-28 opacity-0"
+                >
+                  <p className="mb-4 mt-10 text-justify text-medium leading-relaxed">
+                    <b className="text-pri">MONA</b> cung cấp bánh xe carbon
+                    chắc chắn, nhẹ, bền cho mọi điều kiện—bao gồm xe đạp điện,
+                    xe leo núi và xe đường phố
+                  </p>
+                  <h2 className="mb-1 text-xl font-bold text-pri">
+                    Chúng tôi cung cấp hướng dẫn tốt nhất cho bạn
+                  </h2>
+                  <p className="mb-4 text-justify text-medium leading-relaxed">
+                    Xe đạp nói riêng và các hoạt động thể chất ngoài trời nói
+                    chung là vô cùng cần thiết cho sự phát triển toàn diện của
+                    các bạn nhỏ cũng như người trưởng thành. Vận động không chỉ
+                    giúp nâng cao sức khỏe chống lại bệnh tật, mà còn giúp chúng
+                    ta có tinh thần hăng hái, học tập và làm việc hiệu quả hơn.
+                  </p>
+                  <h2 className="mb-1 text-xl font-bold text-pri">
+                    Mục tiêu của chúng tôi
+                  </h2>
+                  <p className="mb-4 text-justify text-medium leading-relaxed">
+                    Đạt chất lượng cao với giá thành hợp lý. Mở rộng thị trường
+                    với các dự án xuất khẩu ra nước ngoài.
+                  </p>
+                  <div className="flex items-center justify-center lg:block">
+                    <ButtonCustom radius="md" size="lg">
+                      Đọc Thêm
+                    </ButtonCustom>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="products">
-            <h1
-              className="mb-14 mt-12 text-center text-5xl font-bold"
-              style={{ fontFamily: '"Montserrat", sans-serif' }}
-            >
+          <section className="products mb-24">
+            <h1 className="mb-14 mt-12 text-center font-sans text-5xl font-bold">
               Sản Phẩm
             </h1>
-            <div className="px-28">
+            <div className="flex flex-col items-center px-2 font-sans xl:px-40">
               <Tabs
                 key="tabs"
+                variant="bordered"
                 radius="full"
-                color="success"
-                className="w-ful block text-black"
+                color="primary"
+                className="block w-full"
                 onSelectionChange={(selectedId) =>
-                  handleGetBicyclesByCategory(mapping.current.value[selectedId])
+                  handleSelectionChange(selectedId)
                 }
               >
                 {categories.map((category, index) => (
@@ -155,24 +259,48 @@ function Home() {
                     key={index}
                     id={category.idBicycleCategory}
                     title={category.name}
-                    className="p-2 text-sm font-bold text-black"
+                    className="mx-2 p-2 text-sm font-bold"
                   >
-                    <div className="relative flex min-h-[400px] w-full flex-wrap justify-center gap-6">
+                    <div className="relative flex min-h-[400px] w-full flex-wrap">
                       {loadingBicycle &&
                         bicyclesOfCategory.map((bicycle, index) => (
-                          <Card isFooterBlurred className="w-[30%]">
-                            <Image
-                              alt="Bicycle"
-                              className="object-cover"
-                              src={bicycle.bicycleImages[0].source}
-                              classNames="w-1/3"
-                            />
-                            <CardFooter className="absolute bottom-1 z-10 ml-1 w-[calc(100%_-_8px)] justify-between overflow-hidden rounded-large border-1 border-white/20 py-1 shadow-small before:rounded-xl before:bg-white/10">
-                              <p className="text-tiny text-white/80">
-                                {bicycle.name}
-                              </p>
-                            </CardFooter>
-                          </Card>
+                          <div
+                            ref={bicycleRefs.current[index]}
+                            className={clsx(
+                              "my-4 w-full  px-4  lg:w-1/2 xl:w-1/3",
+                              {
+                                "translate-y-36 opacity-0":
+                                  !isViewedBicycles.includes(index),
+                              },
+                            )}
+                          >
+                            <Link to={`/bicycle/${bicycle.idBicycle}`}>
+                              <Card isFooterBlurred>
+                                <CardBody>
+                                  <Image
+                                    isZoomed
+                                    alt="Bicycle"
+                                    className="object-cover"
+                                    src={bicycle.bicycleImages[0].source}
+                                    classNames="w-1/3"
+                                  />
+                                  <div className="px-3">
+                                    <p
+                                      className={cx(
+                                        "mt-3 text-lg font-bold",
+                                        "truncate-text",
+                                      )}
+                                    >
+                                      {bicycle.name}
+                                    </p>
+                                    <p className="mt-3 text-2xl font-bold text-danger">
+                                      {formatToVND(bicycle.price)}
+                                    </p>
+                                  </div>
+                                </CardBody>
+                              </Card>
+                            </Link>
+                          </div>
                         ))}
                       {!loadingBicycle && (
                         <Spinner
@@ -184,6 +312,47 @@ function Home() {
                   </Tab>
                 ))}
               </Tabs>
+              {loadingBicycle && (
+                <ButtonCustom size="lg" radius="lg">
+                  Xem Tất Cả
+                </ButtonCustom>
+              )}
+            </div>
+          </section>
+
+          <section
+            style={{
+              backgroundImage: `url(${require("~/assets/images/about_us/about_us-2.jpg")})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+            ref={bgImageRef}
+            className="relative h-[75vh] overflow-hidden opacity-0"
+          >
+            <p className=" absolute left-[5%] top-1/2 -translate-y-1/2 text-9xl font-bold italic tracking-wider text-warning-400">
+              MONA <br></br>MEDIA
+            </p>
+          </section>
+
+          <section className="mb-12">
+            <div className="mt-16 flex w-full flex-wrap px-4 md:px-20 lg:px-52">
+              {brand_data.map((item, index) => (
+                <div
+                  ref={brandRefs.current[index]}
+                  className="mb-5 w-full translate-y-12 px-12 py-4 opacity-0 md:mb-0 md:w-1/3"
+                >
+                  <div className="flex flex-col items-center">
+                    <FontAwesomeIcon
+                      icon={item.icon}
+                      className="mb-3 text-6xl"
+                    />
+                    <h1 className="mb-2 text-center text-lg font-bold">
+                      {item.heading}
+                    </h1>
+                    <p className="text-center">{item.content}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         </>
