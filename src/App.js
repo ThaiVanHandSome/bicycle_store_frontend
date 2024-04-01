@@ -1,11 +1,11 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, HashRouter } from "react-router-dom";
 import { publicRoutes } from "./routes";
 import { Fragment } from "react";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           {publicRoutes.map(({ path, component, layout }, index) => {
             const Layout = layout || Fragment;
@@ -23,7 +23,7 @@ function App() {
             );
           })}
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </>
   );
 }
