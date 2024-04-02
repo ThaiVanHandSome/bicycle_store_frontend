@@ -18,7 +18,8 @@ import { Drawer } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
-import { getAllCategories } from "~/services/apiServices/Category";
+import routes from "~/config/routes";
+import { getAllCategories } from "~/services/apiServices/CategoryService";
 
 function Header() {
   const [categories, setCategories] = useState([]);
@@ -135,8 +136,8 @@ function Header() {
               </a>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                to={routes.categories}
                 className="header-nav-item group relative block"
                 onMouseEnter={handleGetCategories}
               >
@@ -154,7 +155,7 @@ function Header() {
                     </Listbox>
                   </div>
                 )}
-              </a>
+              </Link>
             </li>
             <li>
               <a href="#" className="header-nav-item">

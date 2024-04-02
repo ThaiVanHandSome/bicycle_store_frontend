@@ -8,13 +8,13 @@ import ButtonCustom from "~/components/ButtonCustom";
 import {
   getAllBicyclesByCategory,
   getAllCategories,
-} from "~/services/apiServices/Category";
+} from "~/services/apiServices/CategoryService";
 import formatToVND from "~/utils/formatToVND";
 import { Link } from "react-router-dom";
 import brand_data from "~/assets/static_data/brand_data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { transform } from "framer-motion";
 import clsx from "clsx";
+import ProductCard from "~/components/ProductCard";
 
 const cx = classNames.bind(styles);
 
@@ -274,32 +274,7 @@ function Home() {
                               },
                             )}
                           >
-                            <Link to={`/bicycle/${bicycle.idBicycle}`}>
-                              <Card isFooterBlurred>
-                                <CardBody>
-                                  <Image
-                                    isZoomed
-                                    alt="Bicycle"
-                                    className="object-cover"
-                                    src={bicycle.bicycleImages[0].source}
-                                    classNames="w-1/3"
-                                  />
-                                  <div className="px-3">
-                                    <p
-                                      className={cx(
-                                        "mt-3 text-lg font-bold",
-                                        "truncate-text",
-                                      )}
-                                    >
-                                      {bicycle.name}
-                                    </p>
-                                    <p className="mt-3 text-2xl font-bold text-danger">
-                                      {formatToVND(bicycle.price)}
-                                    </p>
-                                  </div>
-                                </CardBody>
-                              </Card>
-                            </Link>
+                            <ProductCard bicycle={bicycle} />
                           </div>
                         ))}
                       {!loadingBicycle && (
