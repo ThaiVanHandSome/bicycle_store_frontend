@@ -12,12 +12,14 @@ import {
 import { useEffect, useRef, useState } from "react";
 import ProductCard from "~/components/ProductCard";
 import routes from "~/config/routes";
+import { useDebounced } from "~/hooks/useDebounced";
 import {
   getAllBicycles,
   getAllColors,
   getAllSizes,
   getBicyclesWithPagination,
   getBicyclesWithPaginationAndSorting,
+  postFilterBicycles,
 } from "~/services/apiServices/BicycleService";
 import { getAllCategories } from "~/services/apiServices/CategoryService";
 
@@ -31,21 +33,34 @@ function Category() {
   const [currPage, setCurrPage] = useState(1);
   const [sortVal, setSortVal] = useState(null);
 
+  const [categoriesChecked, setCategoriesChecked] = useState([]);
+  const [colorsChecked, setColorsChecked] = useState([]);
+  const [sizesChecked, setSizesChecked] = useState([]);
+  const [toggleChangeFilter, setToggleChangeFilter] = useState(false);
+
   const totalBicycles = useRef({});
-  const limit = 6;
+  const limitRef = useRef(6);
+
+  const canCallAPI = useDebounced(toggleChangeFilter, 500);
 
   const handleLoadData = async () => {
     const categories = await getAllCategories();
     const sizes = await getAllSizes();
     const colors = await getAllColors();
-    const bicycles = await getBicyclesWithPagination(0, limit);
+    const bicycles = await getBicyclesWithPagination(0, limitRef.current);
     const allBicycles = await getAllBicycles();
+
     totalBicycles.current.value = allBicycles.length;
     setCategories(categories);
     setSizes(sizes);
     setColors(colors);
     setBicycles(bicycles);
     setIsLoadedData(true);
+    setIsLoadedBicycles(true);
+  };
+
+  const handleSetBicycles = (bicycles) => {
+    setBicycles(bicycles);
     setIsLoadedBicycles(true);
   };
 
@@ -56,15 +71,14 @@ function Category() {
       bicycles = await await getBicyclesWithPaginationAndSorting(
         sortVal,
         page - 1,
-        limit,
+        limitRef.current,
         "price",
       );
     } else {
-      bicycles = await getBicyclesWithPagination(page - 1, limit);
+      bicycles = await getBicyclesWithPagination(page - 1, limitRef.current);
     }
-    setBicycles(bicycles);
     setCurrPage(page);
-    setIsLoadedBicycles(true);
+    handleSetBicycles(bicycles);
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -76,17 +90,66 @@ function Category() {
     const bicycles = await getBicyclesWithPaginationAndSorting(
       `${value}`,
       currPage - 1,
-      limit,
+      limitRef.current,
       "price",
     );
-    setBicycles(bicycles);
-    setIsLoadedBicycles(true);
     setSortVal(`${value}`);
+    handleSetBicycles(bicycles);
+  };
+
+  const postFilter = async (
+    categories,
+    colors,
+    sizes,
+    maxPrice = 100000000,
+  ) => {
+    const data = {
+      bicycleCategoriesId: categories,
+      bicycleColorsId: colors,
+      bicycleSizesId: sizes,
+      maxPrice: maxPrice,
+    };
+    const res = await postFilterBicycles(data);
+    return res;
+  };
+
+  const handleGetBicyclesWhenFilter = async () => {
+    const bicycleFilter = await postFilter(
+      categoriesChecked,
+      colorsChecked,
+      sizesChecked,
+    );
+    limitRef.current = bicycleFilter.length;
+    handleSetBicycles(bicycleFilter);
+  };
+
+  const handleToggleState = async (e, val, setState) => {
+    setIsLoadedBicycles(false);
+    setState((prev) => {
+      let nextState = [...prev];
+      if (!e.target.checked) {
+        nextState = [...nextState, val];
+      } else {
+        let index = nextState.indexOf(val);
+        if (index !== -1) {
+          nextState.splice(index, 1);
+        }
+      }
+      return nextState;
+    });
   };
 
   useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     handleLoadData();
   }, []);
+
+  useEffect(() => {
+    handleGetBicyclesWhenFilter();
+  }, [canCallAPI]);
 
   return (
     <section className="category relative mt-[100px] min-h-[100vh] px-44 py-12">
@@ -122,7 +185,16 @@ function Category() {
               <div className="mb-6">
                 <CheckboxGroup label="Danh Mục Sản Phẩm">
                   {categories.map((category, index) => (
-                    <Checkbox value={category.idBicycleCategory}>
+                    <Checkbox
+                      value={category.idBicycleCategory}
+                      onClick={(e) =>
+                        handleToggleState(
+                          e,
+                          category.idBicycleCategory,
+                          setCategoriesChecked,
+                        )
+                      }
+                    >
                       {`${category.name} (${category.countOfBicycles})`}
                     </Checkbox>
                   ))}
@@ -132,7 +204,16 @@ function Category() {
               <div className="mb-6">
                 <CheckboxGroup label="Màu Sắc">
                   {colors.map((color, index) => (
-                    <Checkbox value={color.idBicycleColor}>
+                    <Checkbox
+                      value={color.idBicycleColor}
+                      onClick={(e) =>
+                        handleToggleState(
+                          e,
+                          color.idBicycleColor,
+                          setColorsChecked,
+                        )
+                      }
+                    >
                       {color.name}
                     </Checkbox>
                   ))}
@@ -142,13 +223,24 @@ function Category() {
               <div>
                 <CheckboxGroup label="Kích Thước">
                   {sizes.map((size, index) => (
-                    <Checkbox value={size.idBicycleSize}>{size.name}</Checkbox>
+                    <Checkbox
+                      value={size.idBicycleSize}
+                      onClick={(e) =>
+                        handleToggleState(
+                          e,
+                          size.idBicycleSize,
+                          setSizesChecked,
+                        )
+                      }
+                    >
+                      {size.name}
+                    </Checkbox>
                   ))}
                 </CheckboxGroup>
               </div>
             </div>
             <div className="relative flex-1">
-              {isLoadedBicycles && (
+              {isLoadedBicycles && bicycles && (
                 <>
                   <div className="flex flex-wrap">
                     {bicycles.map((bicycle, index) => (
@@ -159,7 +251,7 @@ function Category() {
                   </div>
                   <div className="mt-6 flex items-center justify-center">
                     <Pagination
-                      total={totalBicycles.current.value / limit}
+                      total={totalBicycles.current.value / limitRef.current}
                       initialPage={currPage}
                       onChange={(page) => handleGetBicyclesByPage(page)}
                     />

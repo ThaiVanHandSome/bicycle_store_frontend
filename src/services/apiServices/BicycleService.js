@@ -1,4 +1,4 @@
-import get from "~/utils/request";
+import { get, post } from "~/utils/request";
 
 export const getImagesByIdBicycle = async (idBicycle) => {
   const res = await get(`bicycle/${idBicycle}/images`, {});
@@ -36,4 +36,15 @@ export const getBicyclesWithPaginationAndSorting = async (
 export const getAllBicycles = async () => {
   const res = await get("bicycles", {});
   return res.data;
+};
+
+export const postFilterBicycles = async (data) => {
+  const options = {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  };
+  const res = await post("bicycles/filter", data);
+  return res.data.data;
 };

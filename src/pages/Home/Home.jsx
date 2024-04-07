@@ -173,6 +173,13 @@ function Home() {
     };
   }, [loadingSuccessful]);
 
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, []);
+
   return (
     <section className="relative mt-[94px] min-h-[100vh] xl:mt-[100px]">
       {loadingSuccessful && (
