@@ -137,7 +137,7 @@ function Header() {
             </li>
             <li>
               <Link
-                to={routes.categories}
+                to={"/category/all"}
                 className="header-nav-item group relative block"
                 onMouseEnter={handleGetCategories}
               >

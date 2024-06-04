@@ -12,18 +12,30 @@ import {
   Slider,
   Spinner,
 } from "@nextui-org/react";
+import { type } from "@testing-library/user-event/dist/type";
 import { Drawer } from "antd";
 import { useEffect, useReducer, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
 import ProductCard from "~/components/ProductCard";
 import routes from "~/config/routes";
 import { useDebounced } from "~/hooks/useDebounced";
 import {
+  getAllBicycles,
   getAllColors,
   getAllSizes,
+  getBicyclesWithPagination,
+  getBicyclesWithPaginationAndSorting,
   postFilterBicycles,
 } from "~/services/apiServices/BicycleService";
 import { getAllCategories } from "~/services/apiServices/CategoryService";
+
+
+
+const initState = {
+  categoriesChecked: [],
+  colorsChecked: [],
+  sizesChecked: [],
+  maxPrice: 200000000
+}
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -43,8 +55,6 @@ const reducer = (state, action) => {
 }
 
 function Categories() {
-  const { id } = useParams();
-
   const [open, setOpen] = useState(false);
 
   const [categories, setCategories] = useState([]);
@@ -57,29 +67,20 @@ function Categories() {
   const [currPage, setCurrPage] = useState(1);
   const [sortVal, setSortVal] = useState("none");
 
-  const initState = {
-    categoriesChecked: id === "all" ? [] : [id],
-    colorsChecked: [],
-    sizesChecked: [],
-    maxPrice: 200000000
-  }
-  
-
   const [state, dispatch] = useReducer(reducer, initState);
   const debouncedState = useDebounced(state, 1000);
 
   const totalBicycles = useRef(0);
   const limitRef = useRef(6);
 
-  // lấy dữ liệu khi lần đầu load trang web
   const handleLoadData = async () => {
     const categories = await getAllCategories();
     const sizes = await getAllSizes();
     const colors = await getAllColors();
     const {totalProducts, bicycles} = await postFilter(
-      initState.categoriesChecked,
-      initState.colorsChecked,
-      initState.sizesChecked,
+      debouncedState.categoriesChecked,
+      debouncedState.colorsChecked,
+      debouncedState.sizesChecked,
       maxPrice,
       sortVal,
       1
@@ -94,13 +95,11 @@ function Categories() {
     setIsLoadedBicycles(true);
   };
 
-  // set bicycles mới và set trạng thái đã load thành công data
   const handleSetBicycles = (bicycles) => {
     setBicycles(bicycles);
     setIsLoadedBicycles(true);
   };
 
-  // set dữ liệu mới khi chọn trang mới
   const handleGetBicyclesByPage = async (page) => {
     setIsLoadedBicycles(false);
     const {totalProducts, bicycles} = await postFilter(
@@ -120,7 +119,6 @@ function Categories() {
     });
   };
 
-  // lấy dữ liệu mới khi chọn selection mới
   const handleChangeSelection = async (value) => {
     setIsLoadedBicycles(false);
     setSortVal(value);
@@ -137,7 +135,6 @@ function Categories() {
     handleSetBicycles(bicycles);
   };
 
-  // gửi yêu cầu lọc và nhận về dữ liệu tương ứng
   const postFilter = async (
     categories,
     colors,
@@ -156,7 +153,6 @@ function Categories() {
     return res;
   };
 
-  // lấy dữ liệu mới khi chọn điều kiện lọc mới
   const handleGetBicyclesWhenFilter = async () => {
     if(!debouncedState) return;
     const {totalProducts, bicycles} = await postFilter(
@@ -172,7 +168,6 @@ function Categories() {
     handleSetBicycles(bicycles);
   };
 
-  // thay đổi mảng chưa id tương ứng khi check hoặc uncheck checkbox
   const handleToggleState = (val, array) => {
     setIsLoadedBicycles(false);
     dispatch({
@@ -182,7 +177,6 @@ function Categories() {
     })
   };
 
-  // thay đổi state khi chọn miền price mới
   const handleChangePrice = (price) => {
     setIsLoadedBicycles(false);
     setMaxPrice(price);
@@ -200,20 +194,17 @@ function Categories() {
     setOpen(false);
   };
 
-  // reload data mỗi khi id được truyền vào thay đổi
   useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
     handleLoadData();
-  }, [id]);
+  }, []);
 
-  // mỗi lần debouncedState thay đổi, thực hiện get lấy dữ liệu mới
   useEffect(() => {
     handleGetBicyclesWhenFilter();
   }, [debouncedState])
-
 
   return (
     <section className="category relative mt-[100px] min-h-[100vh] px-12 md:px-20 lg:px-30 xl:px-44 py-12">
@@ -230,7 +221,6 @@ function Categories() {
             >
               <BreadcrumbItem href={routes.home}>Home</BreadcrumbItem>
               <BreadcrumbItem>Category</BreadcrumbItem>
-              {id !== "all" && <BreadcrumbItem>{id}</BreadcrumbItem>}
             </Breadcrumbs>
             <Select
               className="flex-1"
@@ -248,24 +238,18 @@ function Categories() {
           <Divider className="my-4" />
           <div className="mt-6 flex">
             <div className="side-bar h-[100vh] w-1/3 hidden lg:block">
-              {
-                id === "all" && (
-                    <>
-                        <div className="mb-6">
-                            <CheckboxGroup label="Danh Mục Sản Phẩm" onChange={(newVal) => handleToggleState(newVal, "categoriesChecked")}>
-                            {categories.map((category, index) => (
-                                <Checkbox
-                                value={category.idBicycleCategory}
-                                >
-                                {`${category.name} (${category.countOfBicycles})`}
-                                </Checkbox>
-                            ))}
-                            </CheckboxGroup>
-                        </div>
-                        <Divider className="my-2 w-3/4" />
-                    </>
-                )
-              }
+              <div className="mb-6">
+                <CheckboxGroup label="Danh Mục Sản Phẩm" onChange={(newVal) => handleToggleState(newVal, "categoriesChecked")}>
+                  {categories.map((category, index) => (
+                    <Checkbox
+                      value={category.idBicycleCategory}
+                    >
+                      {`${category.name} (${category.countOfBicycles})`}
+                    </Checkbox>
+                  ))}
+                </CheckboxGroup>
+              </div>
+              <Divider className="my-2 w-3/4" />
               <div className="mb-6">
                 <CheckboxGroup label="Màu Sắc" onChange={(newVal) => handleToggleState(newVal, "colorsChecked")}>
                   {colors.map((color, index) => (

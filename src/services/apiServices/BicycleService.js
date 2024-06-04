@@ -17,7 +17,7 @@ export const getAllColors = async () => {
 
 export const getBicyclesWithPagination = async (offset, pageSize) => {
   const res = await get(`bicycles/pagination/${offset}/${pageSize}`, {});
-  return res.data.content;
+  return res.data;
 };
 
 export const getBicyclesWithPaginationAndSorting = async (
@@ -30,7 +30,7 @@ export const getBicyclesWithPaginationAndSorting = async (
     `bicycles/paginationAndSort/${type}/${offset}/${pageSize}/${field}`,
     {},
   );
-  return res.data.content;
+  return res.data;
 };
 
 export const getAllBicycles = async () => {
@@ -38,13 +38,18 @@ export const getAllBicycles = async () => {
   return res.data;
 };
 
-export const postFilterBicycles = async (data) => {
+export const postFilterBicycles = async (data, page, size, sort) => {
   const options = {
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
   };
-  const res = await post("bicycles/filter", data);
+  const res = await post(`bicycles/filter?page=${page}&size=${size}&sort=${sort}`, data);
   return res.data.data;
 };
+
+export const getBicycleById = async (id) => {
+  const res = await get(`bicycle/${id}`);
+  return res.data;
+}

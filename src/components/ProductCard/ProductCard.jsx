@@ -16,7 +16,7 @@ function ProductCard({ bicycle, className }) {
             isZoomed
             alt="Bicycle"
             className="w-100 object-cover"
-            src={bicycle.bicycleImages[0].source}
+            src={bicycle.image}
           />
           <div className="px-3">
             <p className={cx("mt-3 text-lg font-bold", "truncate-text")}>
