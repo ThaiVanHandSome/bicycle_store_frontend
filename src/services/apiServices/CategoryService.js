@@ -17,3 +17,12 @@ export const getAllBicyclesByCategory = async (idCategory) => {
     console.error(err);
   }
 };
+
+export const getAllCategoriesOfBicycle = async (idBicycle) => {
+  try {
+    const res = await get(`bicycle/${idBicycle}/categories`, {});
+    return res.data;
+  } catch(err) {
+    console.error(err);
+  }
+}
