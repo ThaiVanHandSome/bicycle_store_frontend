@@ -7,6 +7,7 @@ function ButtonCustom({
   size = "md",
   type = "solid",
   radius = "none",
+  onClick,
   children,
   className,
 }) {
@@ -19,6 +20,7 @@ function ButtonCustom({
       size={size}
       type={type}
       radius={radius}
+      onClick={onClick}
     >
       <span className="text-lg font-bold text-white">{children}</span>
     </Button>

@@ -1,21 +1,33 @@
 import { faCircleArrowLeft, faCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Divider, Spinner, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs } from "@nextui-org/react";
+import { Divider, Radio, RadioGroup, Spinner, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs } from "@nextui-org/react";
 import { Carousel } from "antd";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ButtonCustom from "~/components/ButtonCustom";
-import { getBicycleById } from "~/services/apiServices/BicycleService";
+import ProductCard from "~/components/ProductCard";
+import { useToast } from "~/context/ToastContext";
+import { checkProductExist } from "~/services/apiServices/BicycleProductService";
+import { getAllColors, getAllSizes, getBicycleById, getBicycleRelevant } from "~/services/apiServices/BicycleService";
 import { getAllCategoriesOfBicycle } from "~/services/apiServices/CategoryService";
 import formatToVND from "~/utils/formatToVND";
 import { isPossitiveNumber } from "~/utils/number";
 
 function Bicycle() {
+    // toast
+    const openNotification = useToast();
+
     const { id } = useParams();
     const [isLoadedData, setIsLoadedData] = useState(false);
     const [bicycle, setBicycle] = useState(null);
     const [bicycleCategories, setBicycleCategories] = useState(null);
+    const [bicyclesRelevant, setBicyclesRelevant] = useState([]);
+
+    const [colors, setColors] = useState([]);
+    const [sizes, setSizes] = useState([]);
+    const [colorChecked, setColorChecked] = useState(null);
+    const [sizeChecked, setSizeChecked] = useState(null);
 
     const [countBicycleChoosen, setCountBicycleChoosen] = useState(1);
 
@@ -75,7 +87,6 @@ function Bicycle() {
     const handleBlur = (val) => {
         if(val.length === 0) {
             setCountBicycleChoosen(1);
-            return;
         }
     }
 
@@ -88,9 +99,36 @@ function Bicycle() {
         setShowDesc(false);
     }
 
+    // handle add to cart
+    // đang test, sau này truyền JWTToken và 3 thông số idBicycle, idBicycleColor, idBicycleSize
+    const handleAddToCart = async () => {
+        if(id === null || colorChecked === null || sizeChecked === null) {
+            openNotification("error", "Thông báo", "Quý khách vui lòng loại sản phẩm phù hợp!");
+            return;
+        }
+        const data = {
+            idCart: 1,
+            idBicycle: id,
+            idBicycleColor: colorChecked,
+            idBicycleSize: sizeChecked
+        }
+        const {check, message} = await checkProductExist(data);
+        if(!check) {
+            openNotification("error", "Thông báo", message);
+        } else {
+            openNotification("success", "Thông báo", message);
+        }
+    }
+
     const getInitData = async () => {
         const bicycleData = await getBicycleById(id);
         const bicycleCategoriesData = await getAllCategoriesOfBicycle(bicycleData.idBicycle);
+        const bicyclesRelevant = await getBicycleRelevant(bicycleData.idBicycle);
+        const colors = await getAllColors();
+        const sizes = await getAllSizes();
+        setColors(colors);
+        setSizes(sizes);
+        setBicyclesRelevant(bicyclesRelevant);
         setBicycleCategories(bicycleCategoriesData);
         setBicycle(bicycleData);
         setIsLoadedData(true);
@@ -110,7 +148,7 @@ function Bicycle() {
         <>
             {
                 isLoadedData && (
-                    <section className="mt-[100px] py-2 px-28">
+                    <section className="mt-[100px] py-2 px-28 mb-6">
                         <section className="flex">
                             <div className="w-[40%] me-4 group">
                                 <div className="w-full relative">
@@ -144,12 +182,30 @@ function Bicycle() {
                                 <h1 className="text-4xl font-bold mb-2">{bicycle.name}</h1>
                                 <h2 className="text-2xl text-danger font-bold mb-2">{formatToVND(bicycle.price)}</h2>
                                 <p className="mb-2">Mã sản phẩm: <b>{bicycle?.idBicycle}</b></p>
-                                <div className="mb-2">
+                                <div className="mb-3">
                                     Danh mục sản phẩm: {
                                         bicycleCategories.map((category, index) => (
                                             <Link key={category.idCategory} to={`/category/${category.idCategory}`} className="hover:text-pri hover:font-bold transition-all me-2">{category.name}</Link>
                                         ))
                                     }
+                                </div>
+                                <div className="mb-3">
+                                    <RadioGroup label="Kích thước" orientation="horizontal" onValueChange={(val) => setSizeChecked(val)}>
+                                        {
+                                            sizes.map((size, index) => (
+                                                <Radio key={size.idBicycleSize} value={size.idBicycleSize}>{size.name}</Radio>
+                                            ))
+                                        }
+                                    </RadioGroup>
+                                </div>
+                                <div className="mb-3">
+                                    <RadioGroup label="Màu sắc" orientation="horizontal" onValueChange={(val) => setColorChecked(val)}>
+                                            {
+                                                colors.map((color, index) => (
+                                                    <Radio key={color.idBicycleColor} value={color.idBicycleColor}>{color.name}</Radio>
+                                                ))
+                                            }
+                                    </RadioGroup>
                                 </div>
                                 <div className="flex mb-8">
                                     <div className="flex border-2 rounded-lg me-4">
@@ -157,7 +213,7 @@ function Bicycle() {
                                         <input value={countBicycleChoosen} className="w-[30px] text-center border-s-2 border-e-2 font-bold" onChange={(e) => handleChangeCount(e.target.value)} onBlur={(e) => handleBlur(e.target.value)}/>
                                         <div className="w-[30px] flex items-center justify-center cursor-pointer" onClick={handleIncreaseCount}>+</div>
                                     </div>
-                                    <ButtonCustom radius="md">Thêm vào giỏ</ButtonCustom>
+                                    <ButtonCustom radius="md" onClick={handleAddToCart}>Thêm vào giỏ</ButtonCustom>
                                 </div>
                                 <div className="relative border-1 rounded-xl mb-4">
                                     <p className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 font-bold py-1 px-4 bg-pri inline-block rounded-md text-white text-nowrap text-sm">KHUYẾN MÃI KHI MUA XE ĐẠP ONLINE</p>
@@ -220,6 +276,19 @@ function Bicycle() {
                                     </TableBody>
                                 </Table>
 
+                            </div>
+                        </section>
+                        <Divider className="w-full my-4"/>
+                        <section className="mt-6">
+                            <h1 className="text-2xl font-bold text-pri mb-4">Sản phẩm liên quan</h1>
+                            <div className="flex flex-nowrap w-full">
+                                    {
+                                        bicyclesRelevant.map((bicycle, index) => (
+                                            <div key={bicycle.idBicycle} className="w-1/4 px-2">
+                                                <ProductCard bicycle={bicycle}/>
+                                            </div>
+                                        ))
+                                    }
                             </div>
                         </section>
                     </section>

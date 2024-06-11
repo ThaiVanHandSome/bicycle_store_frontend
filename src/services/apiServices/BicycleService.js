@@ -53,3 +53,8 @@ export const getBicycleById = async (id) => {
   const res = await get(`bicycle/${id}`);
   return res.data;
 }
+
+export const getBicycleRelevant = async (id) => {
+  const res = await get(`bicycle/${id}/relevant`);
+  return res.data;
+}

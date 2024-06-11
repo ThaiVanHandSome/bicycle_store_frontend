@@ -8,15 +8,18 @@ import "slick-carousel/slick/slick-theme.css";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./index.css";
 import { NextUIProvider } from "@nextui-org/react";
+import { ToastProvider } from "./context/ToastContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <NextUIProvider>
-      <GlobalStyle>
-        <App />
-      </GlobalStyle>
-    </NextUIProvider>
+      <ToastProvider>
+        <NextUIProvider>
+          <GlobalStyle>
+            <App />
+          </GlobalStyle>
+        </NextUIProvider>
+      </ToastProvider>
   </React.StrictMode>,
 );
 
