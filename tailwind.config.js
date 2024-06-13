@@ -6,14 +6,18 @@ module.exports = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
-    colors: {
-      pri: "#0ab0a6",
-      black: "#000",
-      white: "#fff",
-    },
-    fontFamily: {
-      sans: ["Montserrat", "sans-serif"],
+    extend: {
+      backgroundColor: {
+        pri: "#0ab0a6",
+      },
+      colors: {
+        pri: "#0ab0a6",
+        black: "#000",
+        white: "#fff",
+      },
+      fontFamily: {
+        sans: ["Montserrat", "sans-serif"],
+      },
     },
   },
   darkMode: ["class"],

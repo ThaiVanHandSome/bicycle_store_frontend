@@ -1,18 +1,43 @@
 import { useField } from 'formik';
-import classNames from 'classnames/bind';
-import styles from './FormItem.module.scss';
+import { Input } from '@nextui-org/react';
+import { useState } from 'react';
+import { EyeFilledIcon, EyeSlashFilledIcon } from '../Icon/Icon';
 
-const cx = classNames.bind(styles);
 
-export const MyTextInp = ({ label, ...props }) => {
+export const MyTextInp = ({ label, placeholder, ...props }) => {
     const [field, meta] = useField(props);
     return (
-        <div className={cx('form-item')}>
-            <label htmlFor={props.id || props.name} className={cx('form-item-title')}>
-                {label}
-            </label>
-            <input type="text" {...field} {...props} className={cx('form-item-inp')} />
-            {meta.touched && meta.error ? <div className={cx('error')}>{meta.error}</div> : null}
+        <div className='mb-3'>
+            <Input variant="bordered" type='text' label={label} {...field} {...props}/>
+            {meta.touched && meta.error ? <div className='ms-2 text-sm text-red-600 font-bold'>{meta.error}</div> : null}
+        </div>
+    );
+};
+
+export const MyPasswordInp = ({ label, placeholder,  ...props }) => {
+    const [field, meta] = useField(props);
+    const [isVisible, setIsVisible] = useState(false);
+
+    const toggleVisibility = () => setIsVisible(!isVisible);
+    return (
+        <div className='mb-3'>
+            <Input
+                label={label}
+                variant="bordered"
+                endContent={
+                    <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                    {isVisible ? (
+                        <EyeSlashFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                        <EyeFilledIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                    </button>
+                }
+                type={isVisible ? "text" : "password"}
+                {...field}
+                {...props}
+            />
+            {meta.touched && meta.error ? <div className='ms-2 text-sm text-red-600 font-bold'>{meta.error}</div> : null}
         </div>
     );
 };
@@ -24,15 +49,15 @@ export const MyCheckBox = ({ children, ...props }) => {
     };
     const [field, meta] = useField(props);
     return (
-        <div className={cx('form-item')}>
-            <div className={cx('checkbox-container')}>
-                <div className={cx('checkbox')}>
-                    <input {...field} {...props} className={cx('checkbox-inp')} />
-                    <div className={cx('checkbox-checked')}></div>
+        <div>
+            <div>
+                <div>
+                    <input {...field} {...props}/>
+                    <div></div>
                 </div>
-                <label className={cx('checkbox-title')}>{children}</label>
+                <label>{children}</label>
             </div>
-            {meta.touched && meta.error ? <div className={cx('error')}>{meta.error}</div> : null}
+            {meta.touched && meta.error ? <div>{meta.error}</div> : null}
         </div>
     );
 };
@@ -40,12 +65,12 @@ export const MyCheckBox = ({ children, ...props }) => {
 export const MySelect = ({ label, ...props }) => {
     const [field, meta] = useField(props);
     return (
-        <div className={cx('form-item')}>
-            <label htmlFor={props.id || props.name} className={cx('form-item-title')}>
+        <div>
+            <label htmlFor={props.id || props.name}>
                 {label}
             </label>
-            <select {...field} {...props} className={cx('form-item-select')} />
-            {meta.touched && meta.error ? <div className={cx('error')}>{meta.error}</div> : null}
+            <select {...field} {...props}/>
+            {meta.touched && meta.error ? <div>{meta.error}</div> : null}
         </div>
     );
 };

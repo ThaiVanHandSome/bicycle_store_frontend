@@ -139,6 +139,15 @@ function Bicycle() {
         return val;
     }
 
+     // reload data mỗi khi id được truyền vào thay đổi
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        getInitData();
+    }, [id]);
+
     useEffect(() => {
         getInitData();
         
@@ -148,9 +157,9 @@ function Bicycle() {
         <>
             {
                 isLoadedData && (
-                    <section className="mt-[100px] py-2 px-28 mb-6">
-                        <section className="flex">
-                            <div className="w-[40%] me-4 group">
+                    <section className="mt-[100px] py-2 px-4 lg:px-16 xl:px-28 mb-6">
+                        <section className="block lg:flex">
+                            <div className="w-full lg:w-[40%] me-4 group">
                                 <div className="w-full relative">
                                     <FontAwesomeIcon icon={faCircleArrowLeft} className="cursor-pointer absolute top-1/2 left-0 opacity-0 z-10 -translate-y-1/2 text-2xl group-hover:left-2 group-hover:opacity-100 transition-all" onClick={handlePrevCarousel}/>
                                     <FontAwesomeIcon icon={faCircleArrowRight} className="cursor-pointer absolute top-1/2 right-0 opacity-0 z-10 -translate-y-1/2 text-2xl group-hover:right-2 group-hover:opacity-100 transition-all" onClick={handleNextCarousel}/>
@@ -164,21 +173,21 @@ function Bicycle() {
                                         }
                                     </Carousel>
                                 </div>
-                                <div className="mt-4 flex">
+                                <div className="w-full mt-4 flex overflow-y-auto no-scrollbar lg:has-scrollbar">
                                     {
                                         bicycle.thumbnails.map((src, index) => {
                                             return (
-                                                <div key={index} className={clsx("w-[100px] me-4 cursor-pointer hover:border-1 hover:border-slate-800 hover:rounded-md", {
+                                                <div key={index} className={clsx("block flex-shrink-0 w-[100px] me-4 cursor-pointer hover:border-1 hover:border-slate-800 hover:rounded-md", {
                                                     "border-1 rounded-md": carouselIndexChecked === index
                                                 })} onClick={() => handleChangeCarouselItem(index)}>
-                                                    <img className="rounded-md" src={src} alt="thumbnail"/>
+                                                    <img className="rounded-md w-[100px] block" src={src} alt="thumbnail"/>
                                                 </div>
                                             )
                                         })
                                     }
                                 </div>
                             </div>
-                            <div className="flex-1 px-20 pt-6">
+                            <div className="flex-1 lg:ps-20 pt-6">
                                 <h1 className="text-4xl font-bold mb-2">{bicycle.name}</h1>
                                 <h2 className="text-2xl text-danger font-bold mb-2">{formatToVND(bicycle.price)}</h2>
                                 <p className="mb-2">Mã sản phẩm: <b>{bicycle?.idBicycle}</b></p>
@@ -227,8 +236,8 @@ function Bicycle() {
                             </div>
                         </section>
                         <Divider className="w-full my-4"/>
-                        <section className="w-full flex">
-                            <div className="w-[60%]">
+                        <section className="w-full block lg:flex">
+                            <div className="lg:w-[55%] mb-4 lg:mb-0">
                                 <Tabs variant="solid" className="w-full" onSelectionChange={(selectedId => handleChangeTab(selectedId))}>
                                     <Tab key="desc" id="desc" title="Mô tả sản phẩm"/>
                                     <Tab key="comment" id="comment" title="Bình luận" />
@@ -237,7 +246,7 @@ function Bicycle() {
                                     {showDesc && bicycle.description}
                                 </div>
                             </div>
-                            <div className="flex-1 ms-6">
+                            <div className="flex-1 lg:ms-6">
                                 <div className="text-xl px-2 py-1 mb-2 bg-pri text-white text-center font-bold rounded-lg">THÔNG SỐ KĨ THUẬT</div>
                                 <Table>
                                     <TableHeader>
@@ -281,10 +290,10 @@ function Bicycle() {
                         <Divider className="w-full my-4"/>
                         <section className="mt-6">
                             <h1 className="text-2xl font-bold text-pri mb-4">Sản phẩm liên quan</h1>
-                            <div className="flex flex-nowrap w-full">
+                            <div className="flex flex-wrap lg:flex-nowrap w-full">
                                     {
                                         bicyclesRelevant.map((bicycle, index) => (
-                                            <div key={bicycle.idBicycle} className="w-1/4 px-2">
+                                            <div key={bicycle.idBicycle} className="w-full mb-4 lg:mb-0 lg:w-1/4 px-2">
                                                 <ProductCard bicycle={bicycle}/>
                                             </div>
                                         ))

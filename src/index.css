@@ -41,3 +41,49 @@
 .footer-link {
   @apply mb-2 block transition-all hover:font-semibold hover:text-pri;
 }
+
+/* Custom scrollbar styles for WebKit browsers (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+/* Hide scrollbar for Chrome, Safari, and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge, and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Show scrollbar for Chrome, Safari, and Opera */
+.has-scrollbar::-webkit-scrollbar {
+  display: block;
+}
+
+/* Show scrollbar for IE, Edge, and Firefox */
+.has-scrollbar {
+  -ms-overflow-style: auto;  /* IE and Edge */
+  scrollbar-width: auto;  /* Firefox */
+}

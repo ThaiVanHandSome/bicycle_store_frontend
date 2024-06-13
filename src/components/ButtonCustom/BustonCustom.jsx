@@ -3,9 +3,10 @@ import clsx from "clsx";
 
 function ButtonCustom({
   ref,
+  type,
   color = "success",
   size = "md",
-  type = "solid",
+  variant = "solid",
   radius = "none",
   onClick,
   children,
@@ -15,10 +16,11 @@ function ButtonCustom({
   return (
     <Button
       ref={ref}
+      type={type}
       className={classNames}
       color={color}
       size={size}
-      type={type}
+      variant={variant}
       radius={radius}
       onClick={onClick}
     >

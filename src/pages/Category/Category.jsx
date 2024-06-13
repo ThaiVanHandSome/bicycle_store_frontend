@@ -310,18 +310,24 @@ function Categories() {
               open={open}
               onClose={onClose}
             >
-              <div className="mb-6">
-                <CheckboxGroup label="Danh Mục Sản Phẩm" onChange={(newVal) => handleToggleState(newVal, "categoriesChecked")}>
-                  {categories.map((category, index) => (
-                    <Checkbox
-                      value={category.idBicycleCategory}
-                    >
-                      {`${category.name} (${category.countOfBicycles})`}
-                    </Checkbox>
-                  ))}
-                </CheckboxGroup>
-              </div>
-              <Divider className="my-2 w-full" />
+              {
+                id === "all" && (
+                  <>
+                    <div className="mb-6">
+                      <CheckboxGroup label="Danh Mục Sản Phẩm" onChange={(newVal) => handleToggleState(newVal, "categoriesChecked")}>
+                        {categories.map((category, index) => (
+                          <Checkbox
+                            value={category.idBicycleCategory}
+                          >
+                            {`${category.name} (${category.countOfBicycles})`}
+                          </Checkbox>
+                        ))}
+                      </CheckboxGroup>
+                    </div>
+                    <Divider className="my-2 w-full" />
+                  </>
+                )
+              }
               <div className="mb-6">
                 <CheckboxGroup label="Màu Sắc" onChange={(newVal) => handleToggleState(newVal, "colorsChecked")}>
                   {colors.map((color, index) => (

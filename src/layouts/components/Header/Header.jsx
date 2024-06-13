@@ -15,15 +15,17 @@ import {
   Tooltip,
 } from "@nextui-org/react";
 import { Drawer } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
 import { getAllCategories } from "~/services/apiServices/CategoryService";
+import { decodeJwtPayload } from "~/utils/jwt";
 
 function Header() {
   const [categories, setCategories] = useState([]);
   const [openMenuInBar, setOpenMenuInBar] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
 
   // Drawer of Bar Icon
   const [open, setOpen] = useState(false);
@@ -40,6 +42,14 @@ function Header() {
     const res = await getAllCategories();
     setCategories(res || []);
   };
+
+  useEffect(() => {
+    const jwt = localStorage.getItem("accessToken");
+    if(jwt) {
+      setUserInfo(decodeJwtPayload(jwt));
+      console.log(decodeJwtPayload(jwt));
+    }
+  }, []);
 
   return (
     <section className="fixed left-0 right-0 top-0 z-30 min-h-[60px] bg-white xl:min-h-[100px] xl:shadow-lg">
@@ -175,15 +185,22 @@ function Header() {
             <Dropdown>
               <DropdownTrigger>
                 <div>
-                  <UserIcon width={20} height={20} />
+                  {userInfo === null ? (
+                    <UserIcon width={20} height={20} />
+                  ) : (
+                    <div className="flex items-center">
+                      <img alt="avatar" className="w-[30px] rounded-full me-2" src={userInfo.avatar}/>
+                      <p className="font-bold">{userInfo.firstName + " " + userInfo.lastName }</p>
+                    </div>
+                  )}
                 </div>
               </DropdownTrigger>
               <DropdownMenu variant="faded" aria-label="Static Actions">
                 <DropdownItem className="border-0" key="new">
-                  Đăng nhập
+                  <Link to={routes.login}>Đăng nhập</Link>
                 </DropdownItem>
                 <DropdownItem className="border-0" key="copy">
-                  Đăng ký
+                <Link to={routes.register}>Đăng ký</Link>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
