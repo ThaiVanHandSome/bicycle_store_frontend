@@ -10,19 +10,22 @@ import "./index.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ToastProvider } from "./context/ToastContext";
 import { OverlayProvider } from "./context/OverlayContext";
+import { AuthProvider } from "./context/RefreshTokenContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-      <ToastProvider>
-        <OverlayProvider>
-          <NextUIProvider>
-            <GlobalStyle>
-              <App />
-            </GlobalStyle>
-          </NextUIProvider>
-        </OverlayProvider>
-      </ToastProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <OverlayProvider>
+            <NextUIProvider>
+              <GlobalStyle>
+                <App />
+              </GlobalStyle>
+            </NextUIProvider>
+          </OverlayProvider>
+        </ToastProvider>
+      </AuthProvider>
   </React.StrictMode>,
 );
 

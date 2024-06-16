@@ -19,3 +19,11 @@ export const sendOtp = async (email) => {
     const res = await post(`auth/send-otp?email=${email}`);
     return res.data;
 }
+
+export const refreshToken = async (token) => {
+    const data = {
+        token
+    };
+    const res = await post("auth/refresh-token", data);
+    return res.data;
+}

@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { CartIcon, DeleteIcon, EyeIcon } from "~/components/Icon/Icon";
 import { useToast } from "~/context/ToastContext";
 import { getCart } from "~/services/apiServices/CartService";
@@ -131,9 +132,11 @@ function Cart() {
                                     <TableCell>
                                         <div className="flex items-center">
                                             <Tooltip content="Xem chi tiết">
-                                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50 me-1">
-                                                    <EyeIcon />
-                                                </span>
+                                                <Link to={`/bicycle/${item.bicycle.idBicycle}`} className="flex items-center justify-center">
+                                                    <span className="text-lg text-default-400 cursor-pointer active:opacity-50 me-1">
+                                                        <EyeIcon />
+                                                    </span>
+                                                </Link>
                                             </Tooltip>
                                             <Tooltip color="danger" content="Xóa sản phẩm">
                                                 <span className="text-lg text-danger cursor-pointer active:opacity-50">

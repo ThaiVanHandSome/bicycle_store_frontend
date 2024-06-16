@@ -5,6 +5,7 @@ import ButtonCustom from "~/components/ButtonCustom";
 import { MyPasswordInp, MyTextInp } from "~/components/Form/FormItem";
 import routes from "~/config/routes";
 import { useOverlay } from "~/context/OverlayContext";
+import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
 import { authenticate } from "~/services/apiServices/AuthService";
 
@@ -12,6 +13,7 @@ function Login() {
 
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
+    const [startRefreshToken, stopRefreshToken] = useAuth();
 
     return (<section className="relative mt-[100px] px-24 py-6">
         <section className="rounded-xl px-6 py-2 shadow-lg flex">
@@ -48,6 +50,7 @@ function Login() {
                             localStorage.setItem("accessToken", res.data.accessToken);
                             localStorage.setItem("refreshToken", res.data.refreshToken);
                             openNotification("success", "Thông báo", res.message);
+                            startRefreshToken();
                             window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
                             return;
                         }

@@ -17,11 +17,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
+import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
 import { decodeJwtPayload } from "~/utils/jwt";
 
 function Header() {
   const openNotification = useToast();
+  const [startRefreshToken, stopRefreshToken] = useAuth();
 
   const [userInfo, setUserInfo] = useState(null);
 
@@ -37,6 +39,8 @@ function Header() {
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    stopRefreshToken();
     window.location.href = "http://localhost:3000/bicycle_store_frontend#/login";
     openNotification("success", "Thông báo", "Đăng xuất thành công!");
   }
