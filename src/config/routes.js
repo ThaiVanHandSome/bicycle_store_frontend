@@ -4,7 +4,9 @@ const routes = {
   categories: "/categories",
   bicycle: "/bicycle/:id",
   login: "/login",
-  register: "/register"
+  register: "/register",
+  fotgotPassword: "/forgot-password",
+  cart: "/cart"
 };
 
 export default routes;

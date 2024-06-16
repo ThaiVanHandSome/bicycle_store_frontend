@@ -5,6 +5,8 @@ import Category from "~/pages/Category";
 import Bicycle from "~/pages/Bicycle";
 import Login from "~/pages/Login";
 import Register from "~/pages/Register";
+import ForgotPassword from "~/pages/ForgotPassword";
+import Cart from "~/pages/Cart";
 
 const publicRoutes = [
   {
@@ -30,6 +32,16 @@ const publicRoutes = [
   {
     path: routes.register,
     component: Register,
+    layout: DefaultLayout
+  },
+  {
+    path: routes.fotgotPassword,
+    component: ForgotPassword,
+    layout: DefaultLayout
+  },
+  {
+    path: routes.cart,
+    component: Cart,
     layout: DefaultLayout
   }
 ];

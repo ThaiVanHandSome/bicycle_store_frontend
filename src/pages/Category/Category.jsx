@@ -58,15 +58,14 @@ function Categories() {
   const [sortVal, setSortVal] = useState("none");
 
   const initState = {
-    categoriesChecked: id === "all" ? [] : [id],
+    categoriesChecked: id === "all" ? [] : [parseInt(id)],
     colorsChecked: [],
     sizesChecked: [],
     maxPrice: 200000000
   }
   
-
   const [state, dispatch] = useReducer(reducer, initState);
-  const debouncedState = useDebounced(state, 1000);
+  let debouncedState = useDebounced(state, 1000);
 
   const totalBicycles = useRef(0);
   const limitRef = useRef(6);
@@ -81,11 +80,12 @@ function Categories() {
       initState.colorsChecked,
       initState.sizesChecked,
       maxPrice,
-      sortVal,
+      "none",
       1
     );
     totalBicycles.current = totalProducts;
     setCurrPage(1);
+    setSortVal("none");
     setCategories(categories);
     setSizes(sizes);
     setColors(colors);
@@ -200,7 +200,11 @@ function Categories() {
     setOpen(false);
   };
 
-  // reload data mỗi khi id được truyền vào thay đổi
+  // mỗi lần debouncedState thay đổi, thực hiện get lấy dữ liệu mới
+  useEffect(() => {
+    handleGetBicyclesWhenFilter();
+  }, [debouncedState])
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
@@ -209,14 +213,9 @@ function Categories() {
     handleLoadData();
   }, [id]);
 
-  // mỗi lần debouncedState thay đổi, thực hiện get lấy dữ liệu mới
-  useEffect(() => {
-    handleGetBicyclesWhenFilter();
-  }, [debouncedState])
-
 
   return (
-    <section className="category relative mt-[100px] min-h-[100vh] px-12 md:px-20 lg:px-30 xl:px-44 py-12">
+    <section key={id} className="category relative mt-[100px] min-h-[100vh] px-12 md:px-20 lg:px-30 xl:px-44 py-12">
       {isLoadedData && (
         <>
           <FontAwesomeIcon className="block lg:hidden fixed top-1/2 left-6 -translate-x-1/2 text-4xl bg-white" icon={faBars} onClick={showDrawer}/>
@@ -228,8 +227,8 @@ function Categories() {
               radius="full"
               size="lg"
             >
-              <BreadcrumbItem href={routes.home}>Home</BreadcrumbItem>
-              <BreadcrumbItem>Category</BreadcrumbItem>
+              <BreadcrumbItem href={routes.home}>Trang chủ</BreadcrumbItem>
+              <BreadcrumbItem>Cửa hàng</BreadcrumbItem>
               {id !== "all" && <BreadcrumbItem>{id}</BreadcrumbItem>}
             </Breadcrumbs>
             <Select

@@ -1,6 +1,6 @@
 import { post } from "~/utils/request"
 
-export const checkProductExist = async (data) => {
+export const addToCart = async (data) => {
     const res = await post("/cart/add", data);
     return {
         check: res.data.data,

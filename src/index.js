@@ -9,16 +9,19 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "./index.css";
 import { NextUIProvider } from "@nextui-org/react";
 import { ToastProvider } from "./context/ToastContext";
+import { OverlayProvider } from "./context/OverlayContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
       <ToastProvider>
-        <NextUIProvider>
-          <GlobalStyle>
-            <App />
-          </GlobalStyle>
-        </NextUIProvider>
+        <OverlayProvider>
+          <NextUIProvider>
+            <GlobalStyle>
+              <App />
+            </GlobalStyle>
+          </NextUIProvider>
+        </OverlayProvider>
       </ToastProvider>
   </React.StrictMode>,
 );

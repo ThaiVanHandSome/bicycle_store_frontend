@@ -1,6 +1,4 @@
 import {
-  faArrowCircleDown,
-  faArrowCircleUp,
   faBars,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -19,12 +17,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
-import { getAllCategories } from "~/services/apiServices/CategoryService";
+import { useToast } from "~/context/ToastContext";
 import { decodeJwtPayload } from "~/utils/jwt";
 
 function Header() {
-  const [categories, setCategories] = useState([]);
-  const [openMenuInBar, setOpenMenuInBar] = useState(false);
+  const openNotification = useToast();
+
   const [userInfo, setUserInfo] = useState(null);
 
   // Drawer of Bar Icon
@@ -37,11 +35,11 @@ function Header() {
     setOpen(false);
   };
 
-  const handleGetCategories = async () => {
-    if (categories.length !== 0) return;
-    const res = await getAllCategories();
-    setCategories(res || []);
-  };
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    window.location.href = "http://localhost:3000/bicycle_store_frontend#/login";
+    openNotification("success", "Thông báo", "Đăng xuất thành công!");
+  }
 
   useEffect(() => {
     const jwt = localStorage.getItem("accessToken");
@@ -84,35 +82,7 @@ function Header() {
               </a>
             </ListboxItem>
             <ListboxItem>
-              <div
-                className="header-nav-item-bar"
-                onClick={() => {
-                  setOpenMenuInBar((prev) => !prev);
-                  handleGetCategories();
-                }}
-              >
-                <div className="flex h-full w-full items-center justify-between">
-                  <span>DANH MỤC</span>
-                  {openMenuInBar ? (
-                    <FontAwesomeIcon icon={faArrowCircleDown} />
-                  ) : (
-                    <FontAwesomeIcon icon={faArrowCircleUp} />
-                  )}
-                </div>
-                {openMenuInBar && categories.length !== 0 && (
-                  <div className="text-bold mt-2 rounded-md bg-white p-2 text-medium text-black">
-                    <Listbox>
-                      {categories.map((category, index) => (
-                        <ListboxItem key={index}>
-                          <Link to={`/category/${category.idBicycleCategory}`}>
-                            {category.name}
-                          </Link>
-                        </ListboxItem>
-                      ))}
-                    </Listbox>
-                  </div>
-                )}
-              </div>
+              <Link to={"/category/all"}  className="header-nav-item-bar">CỬA HÀNG</Link>
             </ListboxItem>
             <ListboxItem>
               <a href="#" className="header-nav-item-bar">
@@ -149,22 +119,8 @@ function Header() {
               <Link
                 to={"/category/all"}
                 className="header-nav-item group relative block"
-                onMouseEnter={handleGetCategories}
               >
-                DANH MỤC
-                {categories.length !== 0 && (
-                  <div className="text-bold absolute left-0 top-full hidden rounded-md bg-white p-2 text-medium text-black shadow-lg group-hover:block">
-                    <Listbox>
-                      {categories.map((category, index) => (
-                        <ListboxItem key={index}>
-                          <Link to={`/category/${category.idBicycleCategory}`}>
-                            {category.name}
-                          </Link>
-                        </ListboxItem>
-                      ))}
-                    </Listbox>
-                  </div>
-                )}
+                CỬA HÀNG
               </Link>
             </li>
             <li>
@@ -195,14 +151,22 @@ function Header() {
                   )}
                 </div>
               </DropdownTrigger>
-              <DropdownMenu variant="faded" aria-label="Static Actions">
-                <DropdownItem className="border-0" key="new">
-                  <Link to={routes.login}>Đăng nhập</Link>
-                </DropdownItem>
-                <DropdownItem className="border-0" key="copy">
-                <Link to={routes.register}>Đăng ký</Link>
-                </DropdownItem>
-              </DropdownMenu>
+              {localStorage.getItem("accessToken") ? (
+                <DropdownMenu variant="faded" aria-label="Static Actions">
+                  <DropdownItem className="border-0" key="copy" onClick={handleLogout}>
+                    Đăng xuất
+                  </DropdownItem>
+                </DropdownMenu>
+              ) : (
+                <DropdownMenu variant="faded" aria-label="Static Actions">
+                  <DropdownItem className="border-0" key="new">
+                    <Link to={routes.login} className="w-full h-full block">Đăng nhập</Link>
+                  </DropdownItem>
+                  <DropdownItem className="border-0" key="copy">
+                    <Link to={routes.register}  className="w-full h-full block">Đăng ký</Link>
+                  </DropdownItem>
+                </DropdownMenu>
+              )}
             </Dropdown>
           </div>
           <div className="header-icon">
@@ -217,7 +181,9 @@ function Header() {
               }
             >
               <div>
-                <CartIcon width={22} height={22} />
+                <Link to={routes.cart}>
+                  <CartIcon width={22} height={22} /> 
+                </Link>
               </div>
             </Tooltip>
           </div>
@@ -227,7 +193,36 @@ function Header() {
       {/* Show on <= xl */}
       <div className="flex divide-x-1 xl:hidden">
         <div className="header-icon-not-xxl">
-          <UserIcon width={20} height={20} />
+        <Dropdown>
+              <DropdownTrigger>
+                <div>
+                  {userInfo === null ? (
+                    <UserIcon width={20} height={20} />
+                  ) : (
+                    <div className="flex items-center">
+                      <img alt="avatar" className="w-[30px] rounded-full me-2" src={userInfo.avatar}/>
+                      <p className="font-bold">{userInfo.firstName + " " + userInfo.lastName }</p>
+                    </div>
+                  )}
+                </div>
+              </DropdownTrigger>
+              {localStorage.getItem("accessToken") ? (
+                <DropdownMenu variant="faded" aria-label="Static Actions">
+                  <DropdownItem className="border-0" key="copy" onClick={handleLogout}>
+                    Đăng xuất
+                  </DropdownItem>
+                </DropdownMenu>
+              ) : (
+                <DropdownMenu variant="faded" aria-label="Static Actions">
+                  <DropdownItem className="border-0" key="new">
+                    <Link to={routes.login} className="w-full h-full block">Đăng nhập</Link>
+                  </DropdownItem>
+                  <DropdownItem className="border-0" key="copy">
+                    <Link to={routes.register}  className="w-full h-full block">Đăng ký</Link>
+                  </DropdownItem>
+                </DropdownMenu>
+              )}
+            </Dropdown>
         </div>
         <div className="header-icon-not-xxl">
           <CartIcon width={22} height={22} />

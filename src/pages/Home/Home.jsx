@@ -3,7 +3,7 @@ import styles from "./Home.module.scss";
 import classNames from "classnames/bind";
 import SliderItem from "./SliderItem";
 import silder_data from "~/assets/static_data/slider_data";
-import { Card, CardBody, Image, Spinner, Tab, Tabs } from "@nextui-org/react";
+import { Spinner, Tab, Tabs } from "@nextui-org/react";
 import ButtonCustom from "~/components/ButtonCustom";
 import {
   getAllBicyclesByCategory,
@@ -25,6 +25,7 @@ function Home() {
   const [loadingSuccessful, setLoadingSuccessful] = useState(false);
   const [loadingBicycle, setLoadingBicycle] = useState(false);
   const [isViewedBicycles, setIsViewedBicycles] = useState([]);
+  const [categoryChecked, setCategoryChecked] = useState(1);
 
   const mapping = useRef({});
   const aboutUsImageRef = useRef(null);
@@ -57,12 +58,13 @@ function Home() {
 
   const handleGetDataWhenLoadPage = async () => {
     const categories = await handleGetAllCategories();
-    await handleGetBicyclesByCategory(1);
+    await handleGetBicyclesByCategory(categoryChecked);
     setLoadingSuccessful(true);
     setAllCategories(categories);
   };
 
   const handleGetBicyclesByCategory = async (idBicycleCategory) => {
+    setCategoryChecked(idBicycleCategory);
     setLoadingBicycle(false);
     let bicycles = await getAllBicyclesByCategory(idBicycleCategory);
     bicycles = bicycles.length > 6 ? bicycles.slice(0, 6) : bicycles;
@@ -245,7 +247,6 @@ function Home() {
               </div>
             </div>
           </section>
-
           <section className="products mb-24">
             <h1 className="mb-14 mt-12 text-center font-sans text-5xl font-bold">
               Sản Phẩm
@@ -295,9 +296,7 @@ function Home() {
                 ))}
               </Tabs>
               {loadingBicycle && (
-                <ButtonCustom size="lg" radius="lg">
-                  Xem Tất Cả
-                </ButtonCustom>
+                <Link to={`/category/${categoryChecked}`} className="text-sm text-white bg-pri px-4 py-1 rounded-lg font-bold">Xem tất cả</Link>
               )}
             </div>
           </section>

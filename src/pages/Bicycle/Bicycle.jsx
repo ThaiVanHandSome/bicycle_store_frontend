@@ -8,7 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import ButtonCustom from "~/components/ButtonCustom";
 import ProductCard from "~/components/ProductCard";
 import { useToast } from "~/context/ToastContext";
-import { checkProductExist } from "~/services/apiServices/BicycleProductService";
+import { addToCart } from "~/services/apiServices/BicycleProductService";
 import { getAllColors, getAllSizes, getBicycleById, getBicycleRelevant } from "~/services/apiServices/BicycleService";
 import { getAllCategoriesOfBicycle } from "~/services/apiServices/CategoryService";
 import formatToVND from "~/utils/formatToVND";
@@ -99,20 +99,21 @@ function Bicycle() {
         setShowDesc(false);
     }
 
-    // handle add to cart
-    // đang test, sau này truyền JWTToken và 3 thông số idBicycle, idBicycleColor, idBicycleSize
     const handleAddToCart = async () => {
+        if(!localStorage.getItem("accessToken")) {
+            openNotification("error", "Thông báo", "Quý khách cần đăng nhập để thực hiện chức năng này!");
+            return;
+        }
         if(id === null || colorChecked === null || sizeChecked === null) {
             openNotification("error", "Thông báo", "Quý khách vui lòng loại sản phẩm phù hợp!");
             return;
         }
         const data = {
-            idCart: 1,
-            idBicycle: id,
+            idBicycle: parseInt(id),
             idBicycleColor: colorChecked,
             idBicycleSize: sizeChecked
         }
-        const {check, message} = await checkProductExist(data);
+        const {check, message} = await addToCart(data);
         if(!check) {
             openNotification("error", "Thông báo", message);
         } else {
@@ -154,7 +155,7 @@ function Bicycle() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
-        <>
+        <section className="relative min-h-[100vh]">
             {
                 isLoadedData && (
                     <section className="mt-[100px] py-2 px-4 lg:px-16 xl:px-28 mb-6">
@@ -305,10 +306,10 @@ function Bicycle() {
             }
             {
                 !isLoadedData && (
-                <Spinner color="warning" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"/>
+                    <Spinner color="warning" className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"/>
                 )
             }
-        </>
+        </section>
     )
 }
 

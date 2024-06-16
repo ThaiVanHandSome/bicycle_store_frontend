@@ -10,7 +10,12 @@ export const authenticate = async (data) => {
     return res.data;
 }
 
-export const registerConfirm = async (token) => {
+export const confirmToken = async (token) => {
     const res = await get(`auth/register/confirm?token=${token}`);
     return res;
+}
+
+export const sendOtp = async (email) => {
+    const res = await post(`auth/send-otp?email=${email}`);
+    return res.data;
 }

@@ -1,6 +1,6 @@
 import { Input, Radio, RadioGroup, Spinner } from "@nextui-org/react";
 import { Form, Formik } from "formik";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from 'yup';
 import ButtonCustom from "~/components/ButtonCustom";
 import { MyPasswordInp, MyTextInp } from "~/components/Form/FormItem";
@@ -10,12 +10,14 @@ import { faEnvelope, faUser, faCheckCircle } from "@fortawesome/free-regular-svg
 import clsx from "clsx";
 import { Link } from "react-router-dom";
 import routes from "~/config/routes";
-import { register, registerConfirm } from "~/services/apiServices/AuthService";
+import { register, confirmToken } from "~/services/apiServices/AuthService";
 import { useToast } from "~/context/ToastContext";
+import { useOverlay } from "~/context/OverlayContext";
 
 function Register() {
 
     const openNotification = useToast();
+    const [openOverlay, hideOverlay] = useOverlay();
 
     const [selectedGender, setSelectedGender] = useState(1);
     const [startCountdown, setStartCountdown] = useState(false);
@@ -26,8 +28,6 @@ function Register() {
 
     const [token, setToken] = useState("");
 
-    const spinnerRef = useRef();
-    const overlayRef = useRef();
 
     const handleChange = (value) => {
         setSelectedGender(value);
@@ -44,22 +44,11 @@ function Register() {
         return `${minutes}:${formattedSeconds}`;
     }
 
-    // handle overlay and spinner
-    const loading = () => {
-        spinnerRef.current.style.display = "block";
-        overlayRef.current.style.display = "block";
-    }
-
-    const notLoading = () => {
-        spinnerRef.current.style.display = "none";
-        overlayRef.current.style.display = "none";
-    }
-
     //handle verify
     const handleVerify = async () => {
-        loading();
-        const res = await registerConfirm(token);
-        notLoading();
+        openOverlay();
+        const res = await confirmToken(token);
+        hideOverlay();
         if(res.status === "success") {
             setStatus(prev => {
                 if(prev === 1) setStartCountdown(true);
@@ -80,44 +69,42 @@ function Register() {
         }
     })
 
-    return (<section className="relative mt-[100px] px-24 py-6 flex flex-col items-center">
-        <div ref={overlayRef} style={{backgroundColor: "rgba(0, 0, 0, 0.15)"}} className="hidden absolute top-0 left-0 right-0 bottom-0 z-20"></div>
-        <Spinner ref={spinnerRef} color="warning" className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30"/>
-        <section className="flex items-center my-6">
+    return (<section className="relative mt-[100px] px-2 lg:px-24 py-6 flex flex-col items-center">
+        <section className="flex-col lg:flex-row flex items-start lg:items-center my-6">
             <Status status={status > 1 ? "success" : "progress"} icon={<FontAwesomeIcon icon={faUser}/>} title="Bước 1" desc="Tạo tài khoản"/>
-            <div className={clsx("w-[150px] h-[2px] bg-slate-400 mx-2", {
+            <div className={clsx("lg:w-[150px] lg:h-[2px] w-[2px] h-[40px] bg-slate-400 mx-2", {
                 "bg-success-600": status >= 2,
             })}></div>
             <Status status={status > 2 ? "success" : status === 2 ? "progress": ""} icon={<FontAwesomeIcon icon={faEnvelope}/>} title="Bước 2" desc="Xác nhận tài khoản"/>
-            <div className={clsx("w-[150px] h-[2px] bg-slate-400 mx-2", {
-                "bg-success-600": status >= 3,
+            <div className={clsx("lg:w-[150px] lg:h-[2px] w-[2px] h-[40px] bg-slate-400 mx-2", {
+                "bg-success-600": status >= 2,
             })}></div>
             <Status status={status > 3 ? "success" : status === 3 ? "progress": ""} icon={<FontAwesomeIcon icon={faCheckCircle}/>} title="Bước 3" desc="Đăng ký thành công"/>
         </section>
-        <section className="rounded-xl py-2 shadow-lg flex-shrink-1 w-3/4 px-20">
+        <section className="rounded-xl py-2 shadow-lg flex-shrink-1 w-3/4 lg:px-20 px-4">
             <div>
-                <h1 className="text-5xl font-bold text-pri text-center mb-4">Sign Up</h1>
+                <h1 className="text-5xl font-bold text-pri text-center mb-4">ĐĂNG KÝ</h1>
                 {
                     status === 1 && (
                         <Formik
                             initialValues={{ firstName: '', lastName: '', email: '', password: '', passwordAgain: '' }}
                             validationSchema={Yup.object({
                                 firstName: Yup.string()
-                                    .required("You must enter this field!"),
+                                    .required("Bạn phải nhập trường này!"),
                                 lastName: Yup.string()
-                                    .required("You must enter this field!"),
+                                    .required("Bạn phải nhập trường này!"),
                                 email: Yup.string()
-                                    .required("You must enter this field!")
-                                    .email("Invalid email address!"),
+                                    .required("Bạn phải nhập trường này!")
+                                    .email("Email không hợp lệ!"),
                                 password: Yup.string()
-                                    .required("You must enter this field!")
+                                    .required("Bạn phải nhập trường này!")
                                     .matches(
                                         /^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[0-9])(?=\S*?[^A-Za-z0-9]).{6,})\S$/,
-                                        "You must enter a valid password! Password must be at least 6 characters long, include an uppercase letter, a lowercase letter, a number, and a special character."
+                                        "Bạn phải nhập mật khẩu hợp lệ! Mật khẩu phải dài ít nhất 6 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt!"
                                     ),
                                 passwordAgain:Yup.string()
-                                    .required("You must enter this field!")
-                                    .oneOf([Yup.ref('password'), null], "Passwords must match!")
+                                    .required("Bạn phải nhập trường này!")
+                                    .oneOf([Yup.ref('password'), null], "Mật khẩu không khớp!")
                             })}
                             onSubmit={ async (values) => {
                                 const data = {
@@ -128,9 +115,9 @@ function Register() {
                                     gender: selectedGender,
                                     password: values.password
                                 }
-                                loading();
+                                openOverlay();
                                 const res = await register(data);   
-                                notLoading();                    
+                                hideOverlay();                    
                                 if(res.status === "success") {
                                     setStatus(prev => {
                                         if(prev === 1) setStartCountdown(true);
@@ -142,17 +129,17 @@ function Register() {
                             }}
                         >
                             <Form>
-                                <MyTextInp label="First Name" placeholder="Enter your first name" name="firstName"/>
-                                <MyTextInp label="Last Name" placeholder="Enter your last name" name="lastName"/>
-                                <MyTextInp label="Email" placeholder="Enter your email" name="email"/>
-                                <MyPasswordInp label="Password" placeholder="Enter your password" name="password"/>
-                                <MyPasswordInp label="Password Again" placeholder="Enter your password again" name="passwordAgain"/>
-                                <RadioGroup label="Gender" orientation="horizontal" value={selectedGender} onValueChange={handleChange}>
+                                <MyTextInp label="Họ" placeholder="Nhập họ của bạn" name="firstName"/>
+                                <MyTextInp label="Tên" placeholder="Nhập tên của bạn" name="lastName"/>
+                                <MyTextInp label="Email" placeholder="Nhập email của bạn" name="email"/>
+                                <MyPasswordInp label="Mật khẩu" placeholder="Nhập mật khẩu của bạn" name="password"/>
+                                <MyPasswordInp label="Nhập lại mật khẩu" placeholder="Nhập lại mật khẩu của bạn" name="passwordAgain"/>
+                                <RadioGroup label="Giới tính" orientation="horizontal" value={selectedGender} onValueChange={handleChange}>
                                     <Radio value={1} name="gender">Nam</Radio>
                                     <Radio value={0} name="gender">Nữ</Radio>
                                 </RadioGroup>
                                 <p className="mt-2 text-sm">Đã có tài khoản? <Link to={routes.login} className="font-bold text-sky-500">Đăng nhập</Link></p>
-                                <ButtonCustom type="submit" className="my-6 w-full" radius="lg">Sign up</ButtonCustom>
+                                <ButtonCustom type="submit" className="my-6 w-full" radius="lg">Đăng ký</ButtonCustom>
                             </Form>
                         </Formik>
                     )
@@ -170,7 +157,7 @@ function Register() {
                 {
                     status === 3 && (
                         <div className="flex flex-col items-center">
-                            <h2 className="font-bold text-lg text-secondary mb-4">Chúc mừng bạn đã đăng ký tài khoản thành công!</h2>
+                            <h2 className="font-bold text-lg text-secondary mb-4 text-center">Chúc mừng bạn đã đăng ký tài khoản thành công!</h2>
                             <Link to={routes.login} className="bg-pri text-white font-bold px-2 py-1 rounded-lg">Quay lại đăng nhập</Link>
                         </div>
                     )
