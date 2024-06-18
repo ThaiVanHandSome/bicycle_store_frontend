@@ -15,6 +15,7 @@ import brand_data from "~/assets/static_data/brand_data";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import ProductCard from "~/components/ProductCard";
+import HaveSpinner from "~/components/HaveSpinner";
 
 const cx = classNames.bind(styles);
 
@@ -183,8 +184,8 @@ function Home() {
   }, []);
 
   return (
-    <section className="relative mt-[94px] min-h-[100vh] xl:mt-[100px]">
-      {loadingSuccessful && (
+    <section className="relative mt-[94px] xl:mt-[100px]">
+      <HaveSpinner showSpinner={loadingSuccessful}>
         <>
           <section
             style={{
@@ -337,13 +338,7 @@ function Home() {
             </div>
           </section>
         </>
-      )}
-      {!loadingSuccessful && (
-        <Spinner
-          color="warning"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        />
-      )}
+      </HaveSpinner>
     </section>
   );
 }

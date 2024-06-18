@@ -1,4 +1,5 @@
 import { Form, Formik } from "formik";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import * as Yup from 'yup';
 import ButtonCustom from "~/components/ButtonCustom";
@@ -14,6 +15,13 @@ function Login() {
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
     const [startRefreshToken, stopRefreshToken] = useAuth();
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+    }, []);
 
     return (<section className="relative mt-[100px] px-24 py-6">
         <section className="rounded-xl px-6 py-2 shadow-lg flex">

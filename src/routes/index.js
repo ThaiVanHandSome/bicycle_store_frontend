@@ -7,6 +7,7 @@ import Login from "~/pages/Login";
 import Register from "~/pages/Register";
 import ForgotPassword from "~/pages/ForgotPassword";
 import Cart from "~/pages/Cart";
+import Payment from "~/pages/Payment";
 
 const publicRoutes = [
   {
@@ -42,6 +43,11 @@ const publicRoutes = [
   {
     path: routes.cart,
     component: Cart,
+    layout: DefaultLayout
+  },
+  {
+    path: routes.payment,
+    component: Payment,
     layout: DefaultLayout
   }
 ];

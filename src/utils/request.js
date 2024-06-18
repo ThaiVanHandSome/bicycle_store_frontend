@@ -37,4 +37,17 @@ const post = async (path, options) => {
   }
 };
 
-export { get, post };
+const deleteReq = async (path, body, options = {}) => {
+  try {
+    const res = await request.delete(path, {
+      ...options,
+      data: body,
+    });
+    return res;
+  } catch (error) {
+    console.error("Error during DELETE request:", error);
+    throw error;
+  }
+};
+
+export { get, post, deleteReq };

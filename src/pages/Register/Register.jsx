@@ -1,4 +1,4 @@
-import { Input, Radio, RadioGroup, Spinner } from "@nextui-org/react";
+import { Input, Radio, RadioGroup } from "@nextui-org/react";
 import { Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from 'yup';
@@ -69,6 +69,13 @@ function Register() {
         }
     })
 
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+    }, []);
+
     return (<section className="relative mt-[100px] px-2 lg:px-24 py-6 flex flex-col items-center">
         <section className="flex-col lg:flex-row flex items-start lg:items-center my-6">
             <Status status={status > 1 ? "success" : "progress"} icon={<FontAwesomeIcon icon={faUser}/>} title="Bước 1" desc="Tạo tài khoản"/>
@@ -87,7 +94,7 @@ function Register() {
                 {
                     status === 1 && (
                         <Formik
-                            initialValues={{ firstName: '', lastName: '', email: '', password: '', passwordAgain: '' }}
+                            initialValues={{ firstName: '', lastName: '', email: '', phoneNumber: '', password: '', passwordAgain: '' }}
                             validationSchema={Yup.object({
                                 firstName: Yup.string()
                                     .required("Bạn phải nhập trường này!"),
@@ -96,6 +103,12 @@ function Register() {
                                 email: Yup.string()
                                     .required("Bạn phải nhập trường này!")
                                     .email("Email không hợp lệ!"),
+                                phoneNumber: Yup.string()
+                                    .required("Bạn phải nhập trường này!")
+                                    .matches(
+                                        /^0\d{9}$/,
+                                        "Bạn phải nhập số điện thoại hợp lệ!"
+                                    ),
                                 password: Yup.string()
                                     .required("Bạn phải nhập trường này!")
                                     .matches(
@@ -113,7 +126,8 @@ function Register() {
                                     firstName: values.firstName,
                                     lastName: values.lastName,
                                     gender: selectedGender,
-                                    password: values.password
+                                    password: values.password,
+                                    phoneNumber: values.phoneNumber
                                 }
                                 openOverlay();
                                 const res = await register(data);   
@@ -132,6 +146,7 @@ function Register() {
                                 <MyTextInp label="Họ" placeholder="Nhập họ của bạn" name="firstName"/>
                                 <MyTextInp label="Tên" placeholder="Nhập tên của bạn" name="lastName"/>
                                 <MyTextInp label="Email" placeholder="Nhập email của bạn" name="email"/>
+                                <MyTextInp label="Số điện thoại" placeholder="Nhập số điện thoại của bạn" name="phoneNumber"/>
                                 <MyPasswordInp label="Mật khẩu" placeholder="Nhập mật khẩu của bạn" name="password"/>
                                 <MyPasswordInp label="Nhập lại mật khẩu" placeholder="Nhập lại mật khẩu của bạn" name="passwordAgain"/>
                                 <RadioGroup label="Giới tính" orientation="horizontal" value={selectedGender} onValueChange={handleChange}>

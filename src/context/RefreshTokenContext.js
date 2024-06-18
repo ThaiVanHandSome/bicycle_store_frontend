@@ -23,7 +23,7 @@ export const AuthProvider = ( {children} ) => {
     const startRefreshToken = () => {
         const idInterval = setInterval(async () => {
             await getAccessToken();
-        }, 14 * 60 * 1000);
+        }, 1000 * 60 * 5);
         setIdInterval(idInterval);
     }
 

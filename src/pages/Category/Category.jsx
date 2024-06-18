@@ -15,6 +15,7 @@ import {
 import { Drawer } from "antd";
 import { useEffect, useReducer, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import HaveSpinner from "~/components/HaveSpinner";
 import ProductCard from "~/components/ProductCard";
 import routes from "~/config/routes";
 import { useDebounced } from "~/hooks/useDebounced";
@@ -215,8 +216,8 @@ function Categories() {
 
 
   return (
-    <section key={id} className="category relative mt-[100px] min-h-[100vh] px-12 md:px-20 lg:px-30 xl:px-44 py-12">
-      {isLoadedData && (
+    <section key={id} className="category relative mt-[100px] px-12 md:px-20 lg:px-30 xl:px-44 py-12">
+      <HaveSpinner showSpinner={isLoadedData}>
         <>
           <FontAwesomeIcon className="block lg:hidden fixed top-1/2 left-6 -translate-x-1/2 text-4xl bg-white" icon={faBars} onClick={showDrawer}/>
           <div className="flex items-center justify-center flex-col md:flex-row">
@@ -391,13 +392,7 @@ function Categories() {
             </div>
           </div>
         </>
-      )}
-      {!isLoadedData && (
-        <Spinner
-          color="warning"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        />
-      )}
+      </HaveSpinner>
     </section>
   );
 }
