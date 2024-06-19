@@ -15,7 +15,6 @@ export const ToastProvider = ({ children }) => {
           description: message,
           showProgress: true,
           pauseOnHover: false,
-          role: "status"
         });
       };
     return (

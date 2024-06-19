@@ -4,6 +4,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -14,16 +15,26 @@ import {
 } from "@nextui-org/react";
 import { Drawer } from "antd";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import ButtonCustom from "~/components/ButtonCustom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
 import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
+import { getCart } from "~/services/apiServices/CartService";
+import { fetchCart } from "~/store/actions/cartAction";
+import formatToVND from "~/utils/formatToVND";
 import { decodeJwtPayload } from "~/utils/jwt";
 
 function Header() {
   const openNotification = useToast();
   const [startRefreshToken, stopRefreshToken] = useAuth();
+
+  const dispatch = useDispatch();
+  const items = useSelector((state) => state.cart.items);
+  const cartStatus = useSelector((state) => state.cart.status);
+  const error = useSelector((state) => state.cart.error);
 
   const [userInfo, setUserInfo] = useState(null);
 
@@ -40,17 +51,22 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    dispatch(fetchCart());
     stopRefreshToken();
     window.location.href = "http://localhost:3000/bicycle_store_frontend#/login";
     openNotification("success", "Thông báo", "Đăng xuất thành công!");
   }
 
-  useEffect(() => {
+  const handleGetInitData = async () => {
     const jwt = localStorage.getItem("accessToken");
     if(jwt) {
       setUserInfo(decodeJwtPayload(jwt));
-      console.log(decodeJwtPayload(jwt));
+      dispatch(fetchCart());
     }
+  }
+
+  useEffect(() => {
+    handleGetInitData();
   }, []);
 
   return (
@@ -179,14 +195,46 @@ function Header() {
           <div className="header-icon hidden xl:block">
             <Tooltip
               content={
-                <div>
-                  <h1>GIỎ HÀNG</h1>
-                </div>
+                <>
+                  {(items !== null && items.length !== 0) ? (
+                    <>
+                      <Listbox className="w-[500px] px-2 py-4" variant="bordered">
+                        {
+                          items.map((item) => (
+                            <ListboxItem key={item.bicycle.idBicycle}>
+                              <Link to={`/bicycle/${item.bicycle.idBicycle}`} className="w-full flex items-center">
+                                <img className="w-[60px] me-3" src={item.bicycle.image} alt="bicycle-image"/>
+                                <div className="w-[70%] text-wrap">
+                                  <h2 className="font-bold text-pri text-md">{item.bicycle.name}</h2>
+                                  <p className="text-sm text-slate-400">Màu sắc: {item.bicycleColor.name}</p>
+                                  <p className="text-sm text-slate-400">Kích thước: {item.bicycleSize.name}</p>
+                                </div>
+                                <p className="font-bold text-red-600">{formatToVND(item.bicycle.price)}</p>
+                              </Link>
+                            </ListboxItem>
+                          ))
+                        }
+                      </Listbox>
+                      <Link to={routes.cart} className="px-2 py-1 text-white bg-pri rounded-md font-bold">Xem tất cả</Link>
+                    </>
+                  ) : (
+                    <h1>No item.</h1>
+                  )
+                }
+                </>
               }
             >
               <div>
                 <Link to={routes.cart}>
-                  <CartIcon width={22} height={22} /> 
+                  <div className="relative">
+                    <CartIcon width={22} height={22} />
+                    {
+                      cartStatus === "succeeded" && (
+                        <p className="absolute -top-1/2 -right-1/2 w-[20px] h-[20px] text-sm font-bold bg-white text-red-600 rounded-full flex items-center justify-center shadow-md">{items.length}</p> 
+                      )
+                    }
+                    
+                  </div>
                 </Link>
               </div>
             </Tooltip>

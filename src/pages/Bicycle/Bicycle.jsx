@@ -4,6 +4,7 @@ import { Divider, Radio, RadioGroup, Spinner, Tab, Table, TableBody, TableCell, 
 import { Carousel } from "antd";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import ButtonCustom from "~/components/ButtonCustom";
 import ProductCard from "~/components/ProductCard";
@@ -11,12 +12,16 @@ import { useToast } from "~/context/ToastContext";
 import { addToCart } from "~/services/apiServices/BicycleProductService";
 import { getAllColors, getAllSizes, getBicycleById, getBicycleRelevant } from "~/services/apiServices/BicycleService";
 import { getAllCategoriesOfBicycle } from "~/services/apiServices/CategoryService";
+import { fetchCart } from "~/store/actions/cartAction";
 import formatToVND from "~/utils/formatToVND";
 import { isPossitiveNumber } from "~/utils/number";
 
 function Bicycle() {
     // toast
     const openNotification = useToast();
+
+    // redux
+    const dispatch = useDispatch();
 
     const { id } = useParams();
     const [isLoadedData, setIsLoadedData] = useState(false);
@@ -119,6 +124,7 @@ function Bicycle() {
         } else {
             openNotification("success", "Thông báo", message);
         }
+        dispatch(fetchCart());
     }
 
     const getInitData = async () => {

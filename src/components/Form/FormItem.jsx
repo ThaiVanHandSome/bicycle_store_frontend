@@ -2,12 +2,13 @@ import { useField } from 'formik';
 import { Input } from '@nextui-org/react';
 import { useState } from 'react';
 import { EyeFilledIcon, EyeSlashFilledIcon } from '../Icon/Icon';
+import clsx from 'clsx';
 
 
-export const MyTextInp = ({ label, placeholder, ...props }) => {
+export const MyTextInp = ({ label, placeholder, className, ...props }) => {
     const [field, meta] = useField(props);
     return (
-        <div className='mb-3'>
+        <div className={clsx("mb-3", className)}>
             <Input variant="bordered" type='text' label={label} {...field} {...props}/>
             {meta.touched && meta.error ? <div className='ms-2 text-sm text-red-600 font-bold'>{meta.error}</div> : null}
         </div>

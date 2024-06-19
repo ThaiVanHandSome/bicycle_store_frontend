@@ -1,11 +1,13 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, useDisclosure } from "@nextui-org/react";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import ButtonCustom from "~/components/ButtonCustom";
 import HaveSpinner from "~/components/HaveSpinner";
 import { CartIcon, DeleteIcon, EyeIcon, VerticalDotsIcon } from "~/components/Icon/Icon";
 import { useToast } from "~/context/ToastContext";
 import { deleteProducInCart, getCart } from "~/services/apiServices/CartService";
+import { fetchCart } from "~/store/actions/cartAction";
 import formatToVND from "~/utils/formatToVND";
 
 const columns = [
@@ -39,6 +41,9 @@ function Cart() {
     const openNotification = useToast();
 
     const {isOpen, onOpen, onClose} = useDisclosure();
+
+    // redux
+    const dispatch = useDispatch();
 
     const [cart, setCart] = useState([]);
     const [countChoosens, setCountChoosens] = useState([]);
@@ -138,6 +143,26 @@ function Cart() {
             return newKeys;
           })
         onClose();
+        dispatch(fetchCart());
+    }
+
+    const handlePayment = () => {
+        let productsSelected = cart
+            .map((item, index) => {
+            if(selectedKeys.has(`${index}`)) {
+                return {
+                    data: item,
+                    totalProducts: countChoosens[index],
+                    totalPrices: finalPrices[index]
+                }
+            }
+            })
+            productsSelected = productsSelected.filter((item) => {
+                return item !== undefined;
+            })
+        console.log(productsSelected);
+        localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
+        window.location.href="http://localhost:3000/bicycle_store_frontend#/payment";
     }
 
     useEffect(() => {
@@ -285,7 +310,7 @@ function Cart() {
                                 <p className="font-bold text-red-600"><span className="text-sm text-black">Tổng số lượng: </span> {totalProducts}</p>
                                 <p className="font-bold text-red-600"><span className="text-sm text-black">Tổng giá tiền: </span> {formatToVND(totalPrices)}</p>
                             </div>
-                            <ButtonCustom radius="lg" className="w-full">Thanh toán</ButtonCustom>
+                            <ButtonCustom radius="lg" className="w-full" onClick={handlePayment}>Thanh toán</ButtonCustom>
                         </div>
                     </div>
                 </>
