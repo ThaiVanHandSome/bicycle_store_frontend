@@ -12,8 +12,10 @@ import { useToast } from "~/context/ToastContext";
 import { addToCart } from "~/services/apiServices/BicycleProductService";
 import { getAllColors, getAllSizes, getBicycleById, getBicycleRelevant } from "~/services/apiServices/BicycleService";
 import { getAllCategoriesOfBicycle } from "~/services/apiServices/CategoryService";
+import { checkoutProcessor } from "~/services/apiServices/OrderService";
 import { fetchCart } from "~/store/actions/cartAction";
 import formatToVND from "~/utils/formatToVND";
+import { useTryCatch } from "~/hooks/useTryCatch";
 import { isPossitiveNumber } from "~/utils/number";
 
 function Bicycle() {
@@ -22,6 +24,8 @@ function Bicycle() {
 
     // redux
     const dispatch = useDispatch();
+
+    const {handleTryCatch} = useTryCatch();
 
     const { id } = useParams();
     const [isLoadedData, setIsLoadedData] = useState(false);
@@ -118,32 +122,76 @@ function Bicycle() {
             idBicycleColor: colorChecked,
             idBicycleSize: sizeChecked
         }
-        const {check, message} = await addToCart(data);
-        if(!check) {
-            openNotification("error", "Thông báo", message);
-        } else {
-            openNotification("success", "Thông báo", message);
-        }
-        dispatch(fetchCart());
+        await handleTryCatch(async () => {
+            const {check, message} = await addToCart(data);
+            if(!check) {
+                openNotification("error", "Thông báo", message);
+            } else {
+                openNotification("success", "Thông báo", message);
+            }
+            dispatch(fetchCart());
+        });
     }
 
     const getInitData = async () => {
-        const bicycleData = await getBicycleById(id);
-        const bicycleCategoriesData = await getAllCategoriesOfBicycle(bicycleData.idBicycle);
-        const bicyclesRelevant = await getBicycleRelevant(bicycleData.idBicycle);
-        const colors = await getAllColors();
-        const sizes = await getAllSizes();
-        setColors(colors);
-        setSizes(sizes);
-        setBicyclesRelevant(bicyclesRelevant);
-        setBicycleCategories(bicycleCategoriesData);
-        setBicycle(bicycleData);
-        setIsLoadedData(true);
+        await handleTryCatch(async () => {
+            const bicycleRes = await getBicycleById(id);
+            if(bicycleRes.status === "success") {
+                setBicycle(bicycleRes.data);
+
+                const bicyclesRelevantRes = await getBicycleRelevant(bicycleRes.data.idBicycle);
+                if(bicyclesRelevantRes.status === "success") setBicyclesRelevant(bicyclesRelevantRes.data);
+
+                const colorsRes = await getAllColors();
+                if(colorsRes.status === "success") setColors(colorsRes.data);
+
+                const sizesRes = await getAllSizes();
+                if(sizesRes.status === "success") setSizes(sizesRes.data);
+
+                const bicycleCategoriesRes = await getAllCategoriesOfBicycle(bicycleRes.data.idBicycle);
+                if(bicycleCategoriesRes.status === "success") setBicycleCategories(bicycleCategoriesRes.data);  
+                
+                setIsLoadedData(true);
+            }
+        } )
     }
 
     const getValueOfBicycle = (val) => {
         if(val === null) return "N/A";
         return val;
+    }
+
+    const handlePayment = async () => {
+        if(!localStorage.getItem("accessToken")) {
+            openNotification("error", "Thông báo", "Quý khách cần đăng nhập để thực hiện chức năng này!");
+            return;
+        }
+        if(id === null || colorChecked === null || sizeChecked === null) {
+            openNotification("error", "Thông báo", "Quý khách vui lòng loại sản phẩm phù hợp!");
+            return;
+        };
+        await handleTryCatch(async () => {
+            const res = await checkoutProcessor(parseInt(id), colorChecked, sizeChecked, countBicycleChoosen);
+                if(res.status === "success" && res.data === true) {
+                    const color = colors.find(color => color.idBicycleColor === colorChecked);
+                    const size = sizes.find(size => size.idBicycleSize === sizeChecked);
+                    const productsSelected = [
+                        {
+                            data: {
+                                bicycle,
+                                bicycleColor: color,
+                                bicycleSize: size
+                            },
+                            totalPrices: bicycle.price * countBicycleChoosen,
+                            totalProducts: countBicycleChoosen
+                        }
+                    ]
+                    localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
+                    window.location.href = "http://localhost:3000/bicycle_store_frontend#/payment";
+                    return;
+                }
+                openNotification("error", "Thông báo", res.message);
+        });
     }
 
      // reload data mỗi khi id được truyền vào thay đổi
@@ -239,7 +287,7 @@ function Bicycle() {
                                         <li className="mb-1">Giảm 15% đối với đơn hàng phụ kiện từ 5 món</li>
                                     </ul>
                                 </div>
-                                <ButtonCustom className="w-full" radius="lg">Mua ngay</ButtonCustom>
+                                <ButtonCustom className="w-full" radius="lg" onClick={handlePayment}>Mua ngay</ButtonCustom>
                             </div>
                         </section>
                         <Divider className="w-full my-4"/>

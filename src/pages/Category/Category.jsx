@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import HaveSpinner from "~/components/HaveSpinner";
 import ProductCard from "~/components/ProductCard";
 import routes from "~/config/routes";
+import { useToast } from "~/context/ToastContext";
 import { useDebounced } from "~/hooks/useDebounced";
 import {
   getAllColors,
@@ -25,6 +26,7 @@ import {
   postFilterBicycles,
 } from "~/services/apiServices/BicycleService";
 import { getAllCategories } from "~/services/apiServices/CategoryService";
+import { useTryCatch } from "~/hooks/useTryCatch";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -44,9 +46,12 @@ const reducer = (state, action) => {
 }
 
 function Categories() {
+  const openNotification = useToast();
   const { id } = useParams();
 
   const [open, setOpen] = useState(false);
+
+  const {handleTryCatch} = useTryCatch();
 
   const [categories, setCategories] = useState([]);
   const [bicycles, setBicycles] = useState([]);
@@ -73,26 +78,32 @@ function Categories() {
 
   // lấy dữ liệu khi lần đầu load trang web
   const handleLoadData = async () => {
-    const categories = await getAllCategories();
-    const sizes = await getAllSizes();
-    const colors = await getAllColors();
-    const {totalProducts, bicycles} = await postFilter(
-      initState.categoriesChecked,
-      initState.colorsChecked,
-      initState.sizesChecked,
-      maxPrice,
-      "none",
-      1
-    );
-    totalBicycles.current = totalProducts;
-    setCurrPage(1);
-    setSortVal("none");
-    setCategories(categories);
-    setSizes(sizes);
-    setColors(colors);
-    setBicycles(bicycles);
-    setIsLoadedData(true);
-    setIsLoadedBicycles(true);
+    await handleTryCatch(async () => {
+      const categoriesRes = await getAllCategories();
+      if(categoriesRes.status === "success") setCategories(categoriesRes.data);
+      const sizesRes = await getAllSizes();
+      if(sizesRes.status === "success") setSizes(sizesRes.data);
+      const colorsRes = await getAllColors();
+      if(colorsRes.status === "success") setColors(colorsRes.data);
+      const filterRes = await postFilter(
+        initState.categoriesChecked,
+        initState.colorsChecked,
+        initState.sizesChecked,
+        maxPrice,
+        "none",
+        1
+      );
+      if(filterRes.status === "success") {
+        const {totalProducts, bicycles} = filterRes.data;
+        setBicycles(bicycles);
+        totalBicycles.current = totalProducts;
+      }
+      
+      setCurrPage(1);
+      setSortVal("none");
+      setIsLoadedData(true);
+      setIsLoadedBicycles(true);
+    });
   };
 
   // set bicycles mới và set trạng thái đã load thành công data
@@ -103,39 +114,43 @@ function Categories() {
 
   // set dữ liệu mới khi chọn trang mới
   const handleGetBicyclesByPage = async (page) => {
-    setIsLoadedBicycles(false);
-    const {totalProducts, bicycles} = await postFilter(
-      debouncedState.categoriesChecked,
-      debouncedState.colorsChecked,
-      debouncedState.sizesChecked,
-      maxPrice,
-      sortVal,
-      page
-    );
-    setCurrPage(page);
-    totalBicycles.current = totalProducts;
-    handleSetBicycles(bicycles);
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
+    await handleTryCatch(async () => {
+      setIsLoadedBicycles(false);
+      const {totalProducts, bicycles} = await postFilter(
+        debouncedState.categoriesChecked,
+        debouncedState.colorsChecked,
+        debouncedState.sizesChecked,
+        maxPrice,
+        sortVal,
+        page
+      );
+      setCurrPage(page);
+      totalBicycles.current = totalProducts;
+      handleSetBicycles(bicycles);
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
     });
   };
 
   // lấy dữ liệu mới khi chọn selection mới
   const handleChangeSelection = async (value) => {
-    setIsLoadedBicycles(false);
-    setSortVal(value);
-    const {totalProducts, bicycles} = await postFilter(
-      debouncedState.categoriesChecked,
-      debouncedState.colorsChecked,
-      debouncedState.sizesChecked,
-      maxPrice,
-      value,
-      1
-    );
-    totalBicycles.current = totalProducts;
-    setCurrPage(1);
-    handleSetBicycles(bicycles);
+    await handleTryCatch(async () => {
+      setIsLoadedBicycles(false);
+      setSortVal(value);
+      const {totalProducts, bicycles} = await postFilter(
+        debouncedState.categoriesChecked,
+        debouncedState.colorsChecked,
+        debouncedState.sizesChecked,
+        maxPrice,
+        value,
+        1
+      );
+      totalBicycles.current = totalProducts;
+      setCurrPage(1);
+      handleSetBicycles(bicycles);
+    });
   };
 
   // gửi yêu cầu lọc và nhận về dữ liệu tương ứng
@@ -147,30 +162,35 @@ function Categories() {
     sort,
     page
   ) => {
-    const data = {
-      bicycleCategoriesId: categories,
-      bicycleColorsId: colors,
-      bicycleSizesId: sizes,
-      maxPrice: maxPrice,
-    };
-    const res = await postFilterBicycles(data, page - 1, limitRef.current, sort);
-    return res;
+    const finalRes = await handleTryCatch(async () => {
+      const data = {
+        bicycleCategoriesId: categories,
+        bicycleColorsId: colors,
+        bicycleSizesId: sizes,
+        maxPrice: maxPrice,
+      };
+      const res = await postFilterBicycles(data, page - 1, limitRef.current, sort);
+      return res;
+    });
+    return finalRes;
   };
 
   // lấy dữ liệu mới khi chọn điều kiện lọc mới
   const handleGetBicyclesWhenFilter = async () => {
-    if(!debouncedState) return;
-    const {totalProducts, bicycles} = await postFilter(
-      debouncedState.categoriesChecked,
-      debouncedState.colorsChecked,
-      debouncedState.sizesChecked,
-      maxPrice,
-      sortVal,
-      1
-    );
-    totalBicycles.current = totalProducts;
-    setCurrPage(1);
-    handleSetBicycles(bicycles);
+    await handleTryCatch(async () => {
+      if(!debouncedState) return;
+      const {totalProducts, bicycles} = await postFilter(
+        debouncedState.categoriesChecked,
+        debouncedState.colorsChecked,
+        debouncedState.sizesChecked,
+        maxPrice,
+        sortVal,
+        1
+      );
+      totalBicycles.current = totalProducts;
+      setCurrPage(1);
+      handleSetBicycles(bicycles);
+    });
   };
 
   // thay đổi mảng chưa id tương ứng khi check hoặc uncheck checkbox

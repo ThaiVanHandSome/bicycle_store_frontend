@@ -24,9 +24,13 @@ const handleReNewRequest = () => {
   );
 }
 
-const get = async (path, options) => {
+const get = async (path, params, options) => {
   handleReNewRequest();
-  const res = await request.get(path, options);
+  const config = {
+    params,
+    ...options
+  }
+  const res = await request.get(path, config);
   return res.data;
 };
 
@@ -34,7 +38,7 @@ const post = async (path, options) => {
   handleReNewRequest();
   try {
     const res = await request.post(path, options);
-    return res;
+    return res.data;
   } catch (error) {
     console.error("Error during POST request:", error);
     throw error;
@@ -48,7 +52,7 @@ const deleteReq = async (path, body, options = {}) => {
       ...options,
       data: body,
     });
-    return res;
+    return res.data;
   } catch (error) {
     console.error("Error during DELETE request:", error);
     throw error; 

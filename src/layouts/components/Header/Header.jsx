@@ -117,11 +117,13 @@ function Header() {
           </Listbox>
         </Drawer>
 
-        <img
-          alt="logo-bicycle"
-          src="https://bicyclesport.monamedia.net/wp-content/uploads/2021/09/mona-2-1-e1704788512221.png"
-          className="h-[56px] w-[56px] xl:h-[90px] xl:w-[90px]"
-        />
+        <a href="#">
+          <img
+            alt="logo-bicycle"
+            src="https://bicyclesport.monamedia.net/wp-content/uploads/2021/09/mona-2-1-e1704788512221.png"
+            className="h-[56px] w-[56px] xl:h-[90px] xl:w-[90px]"
+          />
+        </a>
 
         <nav className="hidden h-full xl:block">
           <ul className="flex h-full items-center">
@@ -200,7 +202,7 @@ function Header() {
                     <>
                       <Listbox className="w-[500px] px-2 py-4" variant="bordered">
                         {
-                          items.map((item) => (
+                          items.slice(0, 4).map((item) => (
                             <ListboxItem key={item.bicycle.idBicycle}>
                               <Link to={`/bicycle/${item.bicycle.idBicycle}`} className="w-full flex items-center">
                                 <img className="w-[60px] me-3" src={item.bicycle.image} alt="bicycle-image"/>
@@ -230,7 +232,7 @@ function Header() {
                     <CartIcon width={22} height={22} />
                     {
                       cartStatus === "succeeded" && (
-                        <p className="absolute -top-1/2 -right-1/2 w-[20px] h-[20px] text-sm font-bold bg-white text-red-600 rounded-full flex items-center justify-center shadow-md">{items.length}</p> 
+                        <p className="absolute -top-1/2 -right-1/2 w-[20px] h-[20px] text-sm font-bold bg-white text-red-600 rounded-full flex items-center justify-center shadow-md">{items.length > 9 ? "9+" : items.length}</p> 
                       )
                     }
                     
@@ -276,9 +278,9 @@ function Header() {
               )}
             </Dropdown>
         </div>
-        <div className="header-icon-not-xxl">
+        <Link to={routes.cart} className="header-icon-not-xxl">
           <CartIcon width={22} height={22} />
-        </div>
+        </Link>
       </div>
     </section>
   );

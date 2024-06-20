@@ -2,22 +2,22 @@ import { get, post } from "~/utils/request";
 
 export const getImagesByIdBicycle = async (idBicycle) => {
   const res = await get(`bicycle/${idBicycle}/images`, {});
-  return res.data;
+  return res;
 };
 
 export const getAllSizes = async () => {
   const res = await get("bicycle/sizes", {});
-  return res.data;
+  return res;
 };
 
 export const getAllColors = async () => {
   const res = await get("bicycle/colors", {});
-  return res.data;
+  return res;
 };
 
 export const getBicyclesWithPagination = async (offset, pageSize) => {
   const res = await get(`bicycles/pagination/${offset}/${pageSize}`, {});
-  return res.data;
+  return res;
 };
 
 export const getBicyclesWithPaginationAndSorting = async (
@@ -30,12 +30,12 @@ export const getBicyclesWithPaginationAndSorting = async (
     `bicycles/paginationAndSort/${type}/${offset}/${pageSize}/${field}`,
     {},
   );
-  return res.data;
+  return res;
 };
 
 export const getAllBicycles = async () => {
   const res = await get("bicycles", {});
-  return res.data;
+  return res;
 };
 
 export const postFilterBicycles = async (data, page, size, sort) => {
@@ -46,15 +46,15 @@ export const postFilterBicycles = async (data, page, size, sort) => {
     body: JSON.stringify(data),
   };
   const res = await post(`bicycles/filter?page=${page}&size=${size}&sort=${sort}`, data);
-  return res.data.data;
+  return res.data;
 };
 
 export const getBicycleById = async (id) => {
   const res = await get(`bicycle/${id}`);
-  return res.data;
+  return res;
 }
 
 export const getBicycleRelevant = async (id) => {
   const res = await get(`bicycle/${id}/relevant`);
-  return res.data;
+  return res;
 }

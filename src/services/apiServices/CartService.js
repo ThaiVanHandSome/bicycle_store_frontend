@@ -7,5 +7,5 @@ export const getCart = async () => {
 
 export const deleteProducInCart = async (data) => {
     const res = await deleteReq("cart", data);
-    return res.data;
+    return res;
 }

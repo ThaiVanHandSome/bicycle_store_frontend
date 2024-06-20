@@ -2,12 +2,12 @@ import { get, post } from "~/utils/request"
 
 export const register = async (data) => {
     const res = await post("auth/register", data);
-    return res.data;
+    return res;
 }
 
 export const authenticate = async (data) => {
     const res = await post("auth/authenticate", data);
-    return res.data;
+    return res;
 }
 
 export const confirmToken = async (token) => {
@@ -17,7 +17,7 @@ export const confirmToken = async (token) => {
 
 export const sendOtp = async (email) => {
     const res = await post(`auth/send-otp?email=${email}`);
-    return res.data;
+    return res;
 }
 
 export const refreshToken = async (token) => {
@@ -25,5 +25,5 @@ export const refreshToken = async (token) => {
         token
     };
     const res = await post("auth/refresh-token", data);
-    return res.data;
+    return res;
 }

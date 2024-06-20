@@ -9,12 +9,15 @@ import { useOverlay } from "~/context/OverlayContext";
 import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
 import { authenticate } from "~/services/apiServices/AuthService";
+import { useTryCatch } from "~/hooks/useTryCatch";
 
 function Login() {
 
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
     const [startRefreshToken, stopRefreshToken] = useAuth();
+
+    const {handleTryCatch} = useTryCatch();
 
     useEffect(() => {
         window.scrollTo({
@@ -44,25 +47,27 @@ function Login() {
                             ),
                     })}
                     onSubmit={ async (values) => {
-                        const data = {
-                            email: values.email,
-                            password: values.password
-                        }
-                        openOverlay();
-                        const res = await authenticate(data);
-                        hideOverlay();
-                        if(res === null) {
-                            openNotification("error", "Thông báo", "Email or Password Wrong!");
-                        }
-                        if(res.status === "success") {
-                            localStorage.setItem("accessToken", res.data.accessToken);
-                            localStorage.setItem("refreshToken", res.data.refreshToken);
-                            openNotification("success", "Thông báo", res.message);
-                            startRefreshToken();
-                            window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
-                            return;
-                        }
-                        openNotification("error", "Thông báo", res.message);
+                        await handleTryCatch(async () => {
+                            const data = {
+                                email: values.email,
+                                password: values.password
+                            }
+                            openOverlay();
+                            const res = await authenticate(data);
+                            hideOverlay();
+                            if(res === null) {
+                                openNotification("error", "Thông báo", "Email or Password Wrong!");
+                            }
+                            if(res.status === "success") {
+                                localStorage.setItem("accessToken", res.data.accessToken);
+                                localStorage.setItem("refreshToken", res.data.refreshToken);
+                                openNotification("success", "Thông báo", res.message);
+                                startRefreshToken();
+                                window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
+                                return;
+                            }
+                            openNotification("error", "Thông báo", res.message);
+                        });
                     }}
                 >
                     <Form>

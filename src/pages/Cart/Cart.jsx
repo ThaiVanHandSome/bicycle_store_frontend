@@ -9,6 +9,7 @@ import { useToast } from "~/context/ToastContext";
 import { deleteProducInCart, getCart } from "~/services/apiServices/CartService";
 import { fetchCart } from "~/store/actions/cartAction";
 import formatToVND from "~/utils/formatToVND";
+import { useTryCatch } from "~/hooks/useTryCatch";
 
 const columns = [
     {
@@ -45,6 +46,8 @@ function Cart() {
     // redux
     const dispatch = useDispatch();
 
+    const {handleTryCatch} = useTryCatch();
+
     const [cart, setCart] = useState([]);
     const [countChoosens, setCountChoosens] = useState([]);
     const [finalPrices, setFinalPrices] = useState([]);
@@ -57,20 +60,22 @@ function Cart() {
     const [selectedKeys, setSelectedKeys] = useState(new Set([]));
 
     const handleGetInitData = async () => {
-        const res = await getCart();
-        setLoadedData(true);
-        if(res.status === "success") {
-            setCart(res.data);
-            const arr = Array(res.data.length).fill(1);
-            setCountChoosens(arr);
-            let arr1 = [];
-            Array.from(res.data).forEach((item) => {
-                arr1 = [...arr1, item.bicycle.price];
-            })
-            setFinalPrices(arr1);
-            return;
-        }
-        openNotification("error", "Thông báo", res.message);
+        await handleTryCatch(async () => {
+            const res = await getCart();
+            setLoadedData(true);
+            if(res.status === "success") {
+                setCart(res.data);
+                const arr = Array(res.data.length).fill(1);
+                setCountChoosens(arr);
+                let arr1 = [];
+                Array.from(res.data).forEach((item) => {
+                    arr1 = [...arr1, item.bicycle.price];
+                })
+                setFinalPrices(arr1);
+                return;
+            }
+            openNotification("error", "Thông báo", res.message);
+        });
     }
 
     const handleDecrease = (e, index) => {
@@ -114,42 +119,53 @@ function Cart() {
             idBicycleSize: cart[indexSelected].bicycleSize.idBicycleSize,
             idBicycleColor: cart[indexSelected].bicycleColor.idBicycleColor
         }
-        const res = await deleteProducInCart(data);
-        if(res.status === "success") {
-            openNotification("success", "Thông báo", res.message);
-        } else {
-            openNotification("error", "Thông báo", res.message);
-        }
-        setCart(prev => {
-            return deleteFromIndex(prev, indexSelected);
-        })
-        setCountChoosens(prev => {
-            return deleteFromIndex(prev, indexSelected);
-        })
-        setFinalPrices(prev => {
-            return deleteFromIndex(prev, indexSelected);
-        })
-        setSelectedKeys(prev => {
-            let newKeys = new Set(prev);
-            if(prev === "all") {
-                newKeys = Array.from({ length: cart.length }, (v, i) => `${i}`);
-                newKeys = new Set(newKeys);
+        await handleTryCatch(async () => {
+            const res = await deleteProducInCart(data);
+            if(res.status === "success") {
+                openNotification("success", "Thông báo", res.message);
+            } else {
+                openNotification("error", "Thông báo", res.message);
             }
-            newKeys.delete(`${indexSelected}`);
-            newKeys = new Set([...newKeys].map(value => {
-                if(parseInt(value) > indexSelected) return `${parseInt(value) - 1}`;
-                return value;
-            }));
-            return newKeys;
-          })
-        onClose();
-        dispatch(fetchCart());
+            setCart(prev => {
+                return deleteFromIndex(prev, indexSelected);
+            })
+            setCountChoosens(prev => {
+                return deleteFromIndex(prev, indexSelected);
+            })
+            setFinalPrices(prev => {
+                return deleteFromIndex(prev, indexSelected);
+            })
+            setSelectedKeys(prev => {
+                let newKeys = new Set(prev);
+                if(prev === "all") {
+                    newKeys = Array.from({ length: cart.length }, (v, i) => `${i}`);
+                    newKeys = new Set(newKeys);
+                }
+                newKeys.delete(`${indexSelected}`);
+                newKeys = new Set([...newKeys].map(value => {
+                    if(parseInt(value) > indexSelected) return `${parseInt(value) - 1}`;
+                    return value;
+                }));
+                return newKeys;
+            })
+            onClose();
+            dispatch(fetchCart());
+        });
     }
 
     const handlePayment = () => {
+        let productKey = selectedKeys;
+        if(productKey.size === 0) {
+            openNotification("error", "Thông báo", "Quý khách chưa chọn sản phẩm để thanh toán!");
+            return;
+        }
+        if(productKey === "all") {
+            const keys = Array.from({ length: cart.length }, (v, i) => `${i}`);
+            productKey = new Set(keys);
+        }
         let productsSelected = cart
             .map((item, index) => {
-            if(selectedKeys.has(`${index}`)) {
+            if(productKey.has(`${index}`)) {
                 return {
                     data: item,
                     totalProducts: countChoosens[index],
@@ -160,7 +176,6 @@ function Cart() {
             productsSelected = productsSelected.filter((item) => {
                 return item !== undefined;
             })
-        console.log(productsSelected);
         localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
         window.location.href="http://localhost:3000/bicycle_store_frontend#/payment";
     }
@@ -184,19 +199,20 @@ function Cart() {
             totalPrices += finalPrices[key];
             totalProducts += countChoosens[key];
         })
+
         setTotalPrices(totalPrices);
         setTotalProducts(totalProducts);
     }, [countChoosens, selectedKeys, finalPrices]);
 
     return (
-        <section className="mt-[100px] px-24 py-6"> 
+        <section className="mt-[100px] lg:px-24 py-6 px-4"> 
             <HaveSpinner showSpinner={loadedData}>
                 <>
                     <h1 className="flex items-center font-bold text-xl mb-4">
                         <CartIcon width={34} height={34}/>
                         <span>Giỏ hàng</span>
                     </h1>
-                    <div className="flex">
+                    <div className="block lg:flex">
                         <Table
                             align="center"
                             aria-label="Cart"
@@ -305,7 +321,7 @@ function Cart() {
                                 }
                             </TableBody>
                         </Table>
-                        <div className="w-[20%] ms-4">
+                        <div className="w-full lg:w-[20%] ms-0 lg:ms-4">
                             <div className="px-4 py-4 bg-white rounded-lg shadow-lg mb-4">
                                 <p className="font-bold text-red-600"><span className="text-sm text-black">Tổng số lượng: </span> {totalProducts}</p>
                                 <p className="font-bold text-red-600"><span className="text-sm text-black">Tổng giá tiền: </span> {formatToVND(totalPrices)}</p>

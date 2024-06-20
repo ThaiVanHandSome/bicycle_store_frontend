@@ -10,6 +10,7 @@ import { useOverlay } from "~/context/OverlayContext";
 import { useToast } from "~/context/ToastContext";
 import { confirmToken, sendOtp } from "~/services/apiServices/AuthService";
 import { changePassword } from "~/services/apiServices/UserService";
+import { useTryCatch } from "~/hooks/useTryCatch";
 
 function ForgotPassword() {
 
@@ -18,6 +19,8 @@ function ForgotPassword() {
 
     // 1: enter email, 2: verify, 3: enter password: 4: success
     const [status, setStatus] = useState(1);
+
+    const {handleTryCatch} = useTryCatch();
 
     const [token, setToken] = useState("");
     const [startCountdown, setStartCountdown] = useState(false);
@@ -38,15 +41,17 @@ function ForgotPassword() {
 
     //handle verify
     const handleVerify = async () => {
-        openOverlay();
-        const res = await confirmToken(token);
-        hideOverlay();
-        if(res.status === "success") {
-            setStatus(prev => prev + 1);
-            openNotification("success", "Thông báo", res.message);
-            return;
-        }
-        openNotification("error", "Thông báo", res.message);
+        await handleTryCatch(async () => {
+            openOverlay();
+            const res = await confirmToken(token);
+            hideOverlay();
+            if(res.status === "success") {
+                setStatus(prev => prev + 1);
+                openNotification("success", "Thông báo", res.message);
+                return;
+            }
+            openNotification("error", "Thông báo", res.message);
+        });
     }
 
     useEffect(() => {
