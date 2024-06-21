@@ -47,6 +47,7 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("idInterval");
     dispatch(fetchCart());
     dispatch(clearUserInfo());
     stopRefreshToken();
@@ -165,7 +166,7 @@ function Header() {
                   ) : (
                     <div className="flex items-center">
                       <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
-                      <p className="font-bold">{user.firstName + " " + user.lastName }</p>
+                      <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
                     </div>
                   )}
                 </div>
@@ -257,7 +258,7 @@ function Header() {
                   ) : (
                     <div className="flex items-center">
                       <img alt="avatar" className="w-[30px] rounded-full me-2" src={user.avatar}/>
-                      <p className="font-bold">{user.firstName + " " + user.lastName }</p>
+                      <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
                     </div>
                   )}
                 </div>

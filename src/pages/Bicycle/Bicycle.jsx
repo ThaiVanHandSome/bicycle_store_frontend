@@ -196,18 +196,8 @@ function Bicycle() {
 
      // reload data mỗi khi id được truyền vào thay đổi
     useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-        });
         getInitData();
     }, [id]);
-
-    useEffect(() => {
-        getInitData();
-        
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
     return (
         <section className="relative min-h-[100vh]">
             {

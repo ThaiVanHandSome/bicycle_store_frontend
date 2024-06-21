@@ -194,16 +194,9 @@ function Home() {
     };
   }, [loadingSuccessful]);
 
-  useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  }, []);
-
   return (
     <section className="relative mt-[-6px] xl:mt-0">
-      <HaveSpinner showSpinner={loadingSuccessful}>
+      <HaveSpinner hideSpinner={loadingSuccessful}>
         <>
           <section
             style={{

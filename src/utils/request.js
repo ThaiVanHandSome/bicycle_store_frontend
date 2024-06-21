@@ -44,12 +44,12 @@ const get = async (path, params, customHeaders, options) => {
   return res.data;
 };
 
-const post = async (path, options, customhHeaders) => {
+const post = async (path, options, customHeaders) => {
   try {
     let headers = {
-      ...customhHeaders,
+      ...customHeaders,
     };
-    if (!customhHeaders) {
+    if (!customHeaders) {
       headers = {
         'Content-Type': 'application/json'
       }
@@ -60,6 +60,26 @@ const post = async (path, options, customhHeaders) => {
     return res.data;
   } catch (error) {
     console.error("Error during POST request:", error);
+    throw error;
+  }
+};
+
+const patch = async (path, options, customHeaders) => {
+  try {
+    let headers = {
+      ...customHeaders,
+    };
+    if (!customHeaders) {
+      headers = {
+        'Content-Type': 'application/json'
+      }
+    }
+    const res = await request.patch(path, options, {
+      headers
+    });
+    return res.data;
+  } catch (error) {
+    console.error("Error during PATCH request:", error);
     throw error;
   }
 };
@@ -84,4 +104,4 @@ const deleteReq = async (path, body, customHeaders, options = {}) => {
 };
 
 
-export { get, post, deleteReq };
+export { get, post, patch, deleteReq };

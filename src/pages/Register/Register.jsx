@@ -67,14 +67,7 @@ function Register() {
         return () => {
             clearInterval(intervalId);
         }
-    })
-
-    useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
-    }, []);
+    });
 
     return (<section className="relative px-2 lg:px-24 py-6 flex flex-col items-center">
         <section className="flex-col lg:flex-row flex items-start lg:items-center my-6">

@@ -9,8 +9,9 @@ const routes = {
   cart: "/cart",
   payment: "/payment",
   user: "/user",
-  changePassword: "change-password",
-  purchase: "purchase"
+  changePassword: "/change-password",
+  purchase: "/purchase",
+  favouriteProducts: "/favourite-products"
 };
 
 export default routes;

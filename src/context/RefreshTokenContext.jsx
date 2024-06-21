@@ -1,11 +1,9 @@
 import { refreshToken } from "~/services/apiServices/AuthService";
-import { decodeJwtPayload } from "~/utils/jwt";
-import { useToast } from "./ToastContext";
-import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure} from "@nextui-org/react";
+import {Modal, ModalContent, ModalHeader, ModalBody, useDisclosure} from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import routes from "~/config/routes";
 
-const { createContext, useState, useContext } = require("react");
+const { createContext, useState, useContext, useEffect, useRef } = require("react");
 
 const AuthContext = createContext();
 
@@ -14,7 +12,6 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ( {children} ) => {
-    const openNotification = useToast();
     const {isOpen, onOpen, onClose} = useDisclosure();
     const [idInterval, setIdInterval] = useState(null);
 
@@ -23,26 +20,39 @@ export const AuthProvider = ( {children} ) => {
         const res = await refreshToken(token);
         if (res.status === "success") {
             const newAccessToken = res.data.accessToken;
-            const data = decodeJwtPayload(newAccessToken);
             localStorage.setItem("accessToken", newAccessToken);
         }
     };
 
     const startRefreshToken = () => {
-        const idInterval = setInterval(async () => {
+        const intervalId = setInterval(async () => {
             try {
                 await getAccessToken();
             } catch (error) {
-                onOpen();
+                console.log(error);
             }
-        }, 1000 * 25);
-        setIdInterval(idInterval);
+        }, 1000 * 60);
+        setIdInterval(intervalId);
+        localStorage.setItem("idInterval", JSON.stringify(intervalId));
     }
 
     const stopRefreshToken = () => {
         clearInterval(idInterval);
         setIdInterval(null);
     }
+
+    useEffect(() => {
+        const storedIdInterval = JSON.parse(localStorage.getItem('idInterval'));
+        if(storedIdInterval) {
+            startRefreshToken();
+            setIdInterval(storedIdInterval);
+        }
+
+        return () => {
+            setIdInterval(null);
+            clearInterval(idInterval);
+        };
+    }, []);
 
     return (
         <AuthContext.Provider value={[startRefreshToken, stopRefreshToken ]}>

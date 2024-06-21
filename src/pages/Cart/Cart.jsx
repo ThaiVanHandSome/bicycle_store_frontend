@@ -181,10 +181,6 @@ function Cart() {
     }
 
     useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
         handleGetInitData();
     }, []);
 
@@ -206,7 +202,7 @@ function Cart() {
 
     return (
         <section className="lg:px-24 py-6 px-4"> 
-            <HaveSpinner showSpinner={loadedData}>
+            <HaveSpinner hideSpinner={loadedData}>
                 <>
                     <h1 className="flex items-center font-bold text-xl mb-4">
                         <CartIcon width={34} height={34}/>

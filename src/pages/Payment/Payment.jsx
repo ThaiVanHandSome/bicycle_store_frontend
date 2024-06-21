@@ -2,7 +2,8 @@ import { faMoneyBill1Wave } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { Form, Formik } from "formik";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import * as Yup from 'yup';
 import ButtonCustom from "~/components/ButtonCustom";
 import { MyTextInp } from "~/components/Form/FormItem";
@@ -43,17 +44,13 @@ function Payment() {
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
 
+    const userInfo = useSelector((state) => state.user.info);
+    const [user, setUser] = useState(null);
+
     const {handleTryCatch} = useTryCatch();
 
     const [isLoadedData, setIsLoadedData] = useState(false);
     const [products, setProducts] = useState([]);
-    const [userInfo, setUserInfo] = useState(() => {
-        const accessToken = localStorage.getItem("accessToken");
-        if(accessToken) {
-            const payload = decodeJwtPayload(accessToken);
-            return payload;
-        }
-    });
     const [payMethods, setPayMethods] = useState([]);
     const [payMethodChecked, setPayMethodChecked] = useState(null);
 
@@ -83,15 +80,18 @@ function Payment() {
     
 
     useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });   
         handleGetInitData();
     }, []);
+
+    useEffect(() => {
+        if(userInfo) {
+            setUser(userInfo);
+        }
+    }, [userInfo])
+
     return (
         <section className="py-6 lg:px-24 px-4">
-            <HaveSpinner showSpinner={isLoadedData}>
+            <HaveSpinner hideSpinner={isLoadedData && !!user}>
                 <>
                         <h1 className="font-bold text-2xl mb-4">
                         <FontAwesomeIcon icon={faMoneyBill1Wave}/>
@@ -99,7 +99,7 @@ function Payment() {
                     </h1>
                     <div>
                         <Formik
-                            initialValues={{fullName: `${!!userInfo?.firstName && !!userInfo?.lastName ? userInfo?.firstName + " " + userInfo?.lastName : ""}` || '', phoneNumber: userInfo?.phoneNumber || '', address: "", message: ""}}
+                            initialValues={{fullName: `${!!user?.firstName && !!user?.lastName ? user?.firstName + " " + user?.lastName : ""}` || '', phoneNumber: user?.phoneNumber || '', address: "", message: ""}}
                             validationSchema={Yup.object({
                                 fullName: Yup.string()
                                     .required("Bạn phải nhập trường này!"),

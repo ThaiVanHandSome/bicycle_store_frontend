@@ -10,6 +10,7 @@ import Cart from "~/pages/Cart";
 import Payment from "~/pages/Payment";
 import UserInfomation from "~/pages/UserInfomation";
 import NavBarLayout from "~/layouts/NavBarLayout";
+import ChangePassword from "~/pages/ChangePassword";
 
 const publicRoutes = [
   {
@@ -55,6 +56,11 @@ const publicRoutes = [
   {
     path: routes.user,
     component: UserInfomation,
+    layout: NavBarLayout
+  },
+  {
+    path: routes.changePassword,
+    component: ChangePassword,
     layout: NavBarLayout
   }
 ];

@@ -19,13 +19,6 @@ function Login() {
 
     const {handleTryCatch} = useTryCatch();
 
-    useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth",
-          });
-    }, []);
-
     return (<section className="relative px-24 py-6">
         <section className="rounded-xl px-6 py-2 shadow-lg flex">
             <div className="w-1/2 hidden lg:block">
@@ -61,7 +54,7 @@ function Login() {
                             if(res.status === "success") {
                                 localStorage.setItem("accessToken", res.data.accessToken);
                                 localStorage.setItem("refreshToken", res.data.refreshToken);
-                                openNotification("success", "Thông báo", res.message);
+                                // openNotification("success", "Thông báo", res.message);
                                 startRefreshToken();
                                 window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
                                 return;

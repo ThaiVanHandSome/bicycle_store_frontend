@@ -1,30 +1,51 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import routes from "~/config/routes";
 import { UserIcon } from "~/components/Icon/Icon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoneyBillAlt, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import { useEffect, useState } from "react";
+import clsx from "clsx";
 
 function NavBarLayout({ children }) {
+    let location = useLocation();
+    
+    const [routeActive, setRouteActive] = useState(routes.user);
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        setRouteActive(location.pathname);
+    }, [location]);
+
     return (
         <section>
             <Header />
-            <section className="flex mt-[100px] px-12 py-6">
-                <nav className="w-[400px] flex flex-col py-4 px-12">
-                    <Link className="flex items-center w-full font-bold mb-2 hover:text-pri transition-all" to={routes.user}>
+            <section className="flex mt-[100px]">
+                <nav className="w-[400px] flex flex-col py-6 px-12 bg-gray-200 me-4">
+                    <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
+                        "text-pri": routeActive === routes.user
+                    })} to={routes.user}>
                         <UserIcon className="me-2" width={20} height={20}/>
                         <span>Thông tin cá nhân</span>
                     </Link>
-                    <Link className="flex items-center w-full font-bold mb-2 hover:text-pri transition-all" to={routes.changePassword}>
-                        <FontAwesomeIcon width={20} height={20} className="me-2" icon={faPenToSquare}/>
+                    <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
+                        "text-pri": routeActive === routes.changePassword
+                    })} to={routes.changePassword}>
+                        <FontAwesomeIcon className="me-2 text-xl" icon={faPenToSquare}/>
                         <span>Đổi mật khẩu</span>
                     </Link>
-                    <Link className="flex items-center w-full font-bold mb-2 hover:text-pri transition-all" to={routes.purchase}>
-                        <FontAwesomeIcon width={20} height={20} className="me-2" icon={faMoneyBillAlt}/>
+                    <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
+                        "text-pri": routeActive === routes.purchase
+                    })} to={routes.purchase}>
+                        <FontAwesomeIcon className="me-2 text-xl" icon={faMoneyBillAlt}/>
                         <span>Đơn hàng</span>
                     </Link>
-                    <Link className="flex items-center w-full font-bold mb-2 hover:text-pri transition-all">Sản phẩm yêu thích</Link>
+                    <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
+                        "text-pri": routeActive === routes.favouriteProducts
+                    })}>Sản phẩm yêu thích</Link>
                 </nav>
                 <section className="flex-1">
                     { children }

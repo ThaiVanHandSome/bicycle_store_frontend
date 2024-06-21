@@ -227,17 +227,13 @@ function Categories() {
   }, [debouncedState])
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
     handleLoadData();
   }, [id]);
 
 
   return (
     <section key={id} className="category relative px-12 md:px-20 lg:px-30 xl:px-44 py-12">
-      <HaveSpinner showSpinner={isLoadedData}>
+      <HaveSpinner hideSpinner={isLoadedData}>
         <>
           <FontAwesomeIcon className="block lg:hidden fixed top-1/2 left-6 -translate-x-1/2 text-4xl bg-white" icon={faBars} onClick={showDrawer}/>
           <div className="flex items-center justify-center flex-col md:flex-row">
