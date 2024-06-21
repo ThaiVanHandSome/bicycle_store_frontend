@@ -4,7 +4,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -17,26 +16,23 @@ import { Drawer } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import ButtonCustom from "~/components/ButtonCustom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
 import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
-import { getCart } from "~/services/apiServices/CartService";
 import { fetchCart } from "~/store/actions/cartAction";
+import { fetchUser } from "~/store/actions/userAction";
+import { clearUserInfo } from "~/store/user/userSlice";
 import formatToVND from "~/utils/formatToVND";
-import { decodeJwtPayload } from "~/utils/jwt";
 
 function Header() {
   const openNotification = useToast();
-  const [startRefreshToken, stopRefreshToken] = useAuth();
+  const [ _ , stopRefreshToken] = useAuth();
 
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.cart.items);
+  const items = useSelector((state) => state.cart.items); 
   const cartStatus = useSelector((state) => state.cart.status);
-  const error = useSelector((state) => state.cart.error);
-
-  const [userInfo, setUserInfo] = useState(null);
+  const user = useSelector((state) => state.user.info);
 
   // Drawer of Bar Icon
   const [open, setOpen] = useState(false);
@@ -52,6 +48,7 @@ function Header() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     dispatch(fetchCart());
+    dispatch(clearUserInfo());
     stopRefreshToken();
     window.location.href = "http://localhost:3000/bicycle_store_frontend#/login";
     openNotification("success", "Thông báo", "Đăng xuất thành công!");
@@ -60,8 +57,8 @@ function Header() {
   const handleGetInitData = async () => {
     const jwt = localStorage.getItem("accessToken");
     if(jwt) {
-      setUserInfo(decodeJwtPayload(jwt));
       dispatch(fetchCart());
+      dispatch(fetchUser());
     }
   }
 
@@ -163,19 +160,24 @@ function Header() {
             <Dropdown>
               <DropdownTrigger>
                 <div>
-                  {userInfo === null ? (
+                  {user === null ? (
                     <UserIcon width={20} height={20} />
                   ) : (
                     <div className="flex items-center">
-                      <img alt="avatar" className="w-[30px] rounded-full me-2" src={userInfo.avatar}/>
-                      <p className="font-bold">{userInfo.firstName + " " + userInfo.lastName }</p>
+                      <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
+                      <p className="font-bold">{user.firstName + " " + user.lastName }</p>
                     </div>
                   )}
                 </div>
               </DropdownTrigger>
               {localStorage.getItem("accessToken") ? (
                 <DropdownMenu variant="faded" aria-label="Static Actions">
-                  <DropdownItem className="border-0" key="copy" onClick={handleLogout}>
+                  <DropdownItem className="border-0" key="user">
+                    <Link to={routes.user} className="block w-full h-full">
+                      Thông tin cá nhân
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem className="border-0" key="logout" onClick={handleLogout}>
                     Đăng xuất
                   </DropdownItem>
                 </DropdownMenu>
@@ -250,12 +252,12 @@ function Header() {
         <Dropdown>
               <DropdownTrigger>
                 <div>
-                  {userInfo === null ? (
+                  {user === null ? (
                     <UserIcon width={20} height={20} />
                   ) : (
                     <div className="flex items-center">
-                      <img alt="avatar" className="w-[30px] rounded-full me-2" src={userInfo.avatar}/>
-                      <p className="font-bold">{userInfo.firstName + " " + userInfo.lastName }</p>
+                      <img alt="avatar" className="w-[30px] rounded-full me-2" src={user.avatar}/>
+                      <p className="font-bold">{user.firstName + " " + user.lastName }</p>
                     </div>
                   )}
                 </div>

@@ -9,6 +9,7 @@ import { MyTextInp } from "~/components/Form/FormItem";
 import HaveSpinner from "~/components/HaveSpinner";
 import { useOverlay } from "~/context/OverlayContext";
 import { useToast } from "~/context/ToastContext";
+import { useTryCatch } from "~/hooks/useTryCatch";
 import { checkout } from "~/services/apiServices/OrderService";
 import { getAllPayMethods } from "~/services/apiServices/PayMethodService";
 import formatToVND from "~/utils/formatToVND";
@@ -42,6 +43,8 @@ function Payment() {
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
 
+    const {handleTryCatch} = useTryCatch();
+
     const [isLoadedData, setIsLoadedData] = useState(false);
     const [products, setProducts] = useState([]);
     const [userInfo, setUserInfo] = useState(() => {
@@ -55,13 +58,15 @@ function Payment() {
     const [payMethodChecked, setPayMethodChecked] = useState(null);
 
     const handleGetInitData = async () => {
-        setProducts(JSON.parse(localStorage.getItem("productsSelected")));
-        const accessToken = localStorage.getItem("accessToken");
-        const res = await getAllPayMethods();
-        if(res.status === "success") {
-            setPayMethods(res.data);
-        }
-        setIsLoadedData(true);
+        await handleTryCatch(async () => {
+            setProducts(JSON.parse(localStorage.getItem("productsSelected")) || []);
+            const accessToken = localStorage.getItem("accessToken");
+            const res = await getAllPayMethods();
+            if(res.status === "success") {
+                setPayMethods(res.data);
+            }
+            setIsLoadedData(true);
+        });
     }
 
     const totalPrice = useMemo(() => {
@@ -85,7 +90,7 @@ function Payment() {
         handleGetInitData();
     }, []);
     return (
-        <section className="mt-[100px] py-6 lg:px-24 px-4">
+        <section className="py-6 lg:px-24 px-4">
             <HaveSpinner showSpinner={isLoadedData}>
                 <>
                         <h1 className="font-bold text-2xl mb-4">
@@ -121,25 +126,28 @@ function Payment() {
                                     idBicycleColor: product.data.bicycleColor.idBicycleColor,
                                     quantity: product.totalProducts
                                 }));
-                                const data = {
-                                    bicycleProductModels: bicycleProductList,
-                                    idPayMethod: payMethodChecked,
-                                    totalQuantity: totalQuantity,
-                                    totalPrice: totalPrice,
-                                    shipPrice: 0,
-                                    shipAddress: values.address,
-                                    message: values.message,
-                                    fullName: values.fullName,
-                                    phoneNumber: values.phoneNumber
-                                }
-                                const res = await checkout(data);
-                                hideOverlay();
-                                if(res.status === "success") {
-                                    openNotification("success", "Thông báo", res.message);
-                                    window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
-                                    return;
-                                }
-                                openNotification("error", "Thông báo", res.message);
+                                await handleTryCatch(async () => {
+                                    const data = {
+                                        bicycleProductModels: bicycleProductList,
+                                        idPayMethod: payMethodChecked,
+                                        totalQuantity: totalQuantity,
+                                        totalPrice: totalPrice,
+                                        shipPrice: 0,
+                                        shipAddress: values.address,
+                                        message: values.message,
+                                        fullName: values.fullName,
+                                        phoneNumber: values.phoneNumber
+                                    }
+                                    const res = await checkout(data);
+                                    hideOverlay();
+                                    if(res.status === "success") {
+                                        openNotification("success", "Thông báo", res.message);
+                                        localStorage.removeItem("productsSelected");
+                                        window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
+                                        return;
+                                    }
+                                    openNotification("error", "Thông báo", res.message);
+                                });
                             }}
                         >
                             <Form>

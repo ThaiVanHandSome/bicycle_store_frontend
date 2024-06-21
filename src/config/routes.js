@@ -7,7 +7,10 @@ const routes = {
   register: "/register",
   fotgotPassword: "/forgot-password",
   cart: "/cart",
-  payment: "/payment"
+  payment: "/payment",
+  user: "/user",
+  changePassword: "change-password",
+  purchase: "purchase"
 };
 
 export default routes;

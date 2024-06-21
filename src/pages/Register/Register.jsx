@@ -76,7 +76,7 @@ function Register() {
           });
     }, []);
 
-    return (<section className="relative mt-[100px] px-2 lg:px-24 py-6 flex flex-col items-center">
+    return (<section className="relative px-2 lg:px-24 py-6 flex flex-col items-center">
         <section className="flex-col lg:flex-row flex items-start lg:items-center my-6">
             <Status status={status > 1 ? "success" : "progress"} icon={<FontAwesomeIcon icon={faUser}/>} title="Bước 1" desc="Tạo tài khoản"/>
             <div className={clsx("lg:w-[150px] lg:h-[2px] w-[2px] h-[40px] bg-slate-400 mx-2", {

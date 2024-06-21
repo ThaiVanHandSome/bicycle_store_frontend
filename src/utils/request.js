@@ -1,43 +1,62 @@
 import axios from "axios";
+import { decodeJwtPayload } from "./jwt";
 
 const request = axios.create({
   baseURL: "http://localhost:8989/api/v1/",
   timeout: 10000,
 });
 
-const handleReNewRequest = () => {
-  request.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      config.headers['Content-Type'] = 'application/json';
-      config.headers['Access-Control-Allow-Origin'] = '*';
-      config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-      config.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-}
+const isTokenExpired = (token) => {
+  const decodedToken = decodeJwtPayload(token);
+  const currentTime = Date.now() / 1000;
+  return decodedToken.exp < currentTime;
+};
 
-const get = async (path, params, options) => {
-  handleReNewRequest();
+request.interceptors.request.use(
+  async (config) => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    // config.headers['Content-Type'] = 'application/json';
+    config.headers['Access-Control-Allow-Origin'] = '*';
+    config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+    config.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+
+  return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+const get = async (path, params, customHeaders, options) => {
+  const headers = {
+    ...customHeaders,
+    'Content-Type': 'application/json'
+  };
   const config = {
     params,
+    headers,
     ...options
-  }
+  };
   const res = await request.get(path, config);
   return res.data;
 };
 
-const post = async (path, options) => {
-  handleReNewRequest();
+const post = async (path, options, customhHeaders) => {
   try {
-    const res = await request.post(path, options);
+    let headers = {
+      ...customhHeaders,
+    };
+    if (!customhHeaders) {
+      headers = {
+        'Content-Type': 'application/json'
+      }
+    }
+    const res = await request.post(path, options, {
+      headers
+    });
     return res.data;
   } catch (error) {
     console.error("Error during POST request:", error);
@@ -45,12 +64,17 @@ const post = async (path, options) => {
   }
 };
 
-const deleteReq = async (path, body, options = {}) => {
-  handleReNewRequest();
+
+const deleteReq = async (path, body, customHeaders, options = {}) => {
+  const headers = {
+    ...customHeaders,
+    'Content-Type': 'application/json'
+  };
   try {
     const res = await request.delete(path, {
       ...options,
       data: body,
+      headers,
     });
     return res.data;
   } catch (error) {
@@ -58,5 +82,6 @@ const deleteReq = async (path, body, options = {}) => {
     throw error; 
   }
 };
+
 
 export { get, post, deleteReq };

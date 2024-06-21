@@ -56,13 +56,13 @@ function Home() {
   const handleGetAllCategories = async () => {
     const categories = await handleTryCatch(async () => {
       const categoriesRes = await getAllCategories();
-      if(categoriesRes.status === "success") {
+      if(categoriesRes?.status === "success") {
         const obj = {};
-        categoriesRes.data.forEach((category, index) => {
+        categoriesRes?.data.forEach((category, index) => {
           obj[index] = category.idBicycleCategory;
         });
         mapping.current.value = obj;
-        return categoriesRes.data;
+        return categoriesRes?.data;
       }
     });
     return categories;
@@ -71,10 +71,9 @@ function Home() {
   const handleGetDataWhenLoadPage = async () => {
     await handleTryCatch(async () => {
       const categories = await handleGetAllCategories();
-      console.log(categories);
       await handleGetBicyclesByCategory(categoryChecked);
       setLoadingSuccessful(true);
-      setAllCategories(categories);
+      setAllCategories(categories || []);
     });
   };
 
@@ -83,8 +82,8 @@ function Home() {
       setCategoryChecked(idBicycleCategory);
       setLoadingBicycle(false);
       let bicyclesRes = await getAllBicyclesByCategory(idBicycleCategory);
-      if(bicyclesRes.status === "success") {
-        let bicycles = bicyclesRes.data;
+      if(bicyclesRes?.status === "success") {
+        let bicycles = bicyclesRes?.data;
         bicycles = bicycles.length > 6 ? bicycles.slice(0, 6) : bicycles;
         bicycleRefs.current = Array(Math.min(bicycles.length, 6))
         .fill()
@@ -203,7 +202,7 @@ function Home() {
   }, []);
 
   return (
-    <section className="relative mt-[94px] xl:mt-[100px]">
+    <section className="relative mt-[-6px] xl:mt-0">
       <HaveSpinner showSpinner={loadingSuccessful}>
         <>
           <section

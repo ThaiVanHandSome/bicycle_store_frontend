@@ -8,6 +8,8 @@ import Register from "~/pages/Register";
 import ForgotPassword from "~/pages/ForgotPassword";
 import Cart from "~/pages/Cart";
 import Payment from "~/pages/Payment";
+import UserInfomation from "~/pages/UserInfomation";
+import NavBarLayout from "~/layouts/NavBarLayout";
 
 const publicRoutes = [
   {
@@ -49,6 +51,11 @@ const publicRoutes = [
     path: routes.payment,
     component: Payment,
     layout: DefaultLayout
+  },
+  {
+    path: routes.user,
+    component: UserInfomation,
+    layout: NavBarLayout
   }
 ];
 

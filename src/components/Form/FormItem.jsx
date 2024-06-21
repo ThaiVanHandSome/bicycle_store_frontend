@@ -5,11 +5,11 @@ import { EyeFilledIcon, EyeSlashFilledIcon } from '../Icon/Icon';
 import clsx from 'clsx';
 
 
-export const MyTextInp = ({ label, placeholder, className, ...props }) => {
+export const MyTextInp = ({ label, placeholder, isDisabled, className, ...props }) => {
     const [field, meta] = useField(props);
     return (
         <div className={clsx("mb-3", className)}>
-            <Input variant="bordered" type='text' label={label} {...field} {...props}/>
+            <Input isDisabled={isDisabled} variant="bordered" type='text' label={label} {...field} {...props}/>
             {meta.touched && meta.error ? <div className='ms-2 text-sm text-red-600 font-bold'>{meta.error}</div> : null}
         </div>
     );

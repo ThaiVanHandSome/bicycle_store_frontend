@@ -212,7 +212,7 @@ function Bicycle() {
         <section className="relative min-h-[100vh]">
             {
                 isLoadedData && (
-                    <section className="mt-[100px] py-2 px-4 lg:px-16 xl:px-28 mb-6">
+                    <section className="py-2 px-4 lg:px-16 xl:px-28 mb-6">
                         <section className="block lg:flex">
                             <div className="w-full lg:w-[40%] me-4 group">
                                 <div className="w-full relative">

@@ -5,7 +5,7 @@ function DefaultLayout({ children }) {
   return (
     <section>
       <Header />
-      <section>{children}</section>
+      <section className="mt-[100px]">{children}</section>
       <Footer />
     </section>
   );

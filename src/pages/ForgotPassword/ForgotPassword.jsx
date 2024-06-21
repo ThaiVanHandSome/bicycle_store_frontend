@@ -73,7 +73,7 @@ function ForgotPassword() {
         }
     }, [status]);
 
-    return (<section className="relative mt-[100px] px-24 py-6">
+    return (<section className="relative px-24 py-6">
         <section className="rounded-xl px-6 py-2 shadow-lg flex">
             <div className="w-1/2">
                 <img alt="bicycle-bg" src={require("~/assets/images/sliders/slider-02.png")} className="w-full"/>

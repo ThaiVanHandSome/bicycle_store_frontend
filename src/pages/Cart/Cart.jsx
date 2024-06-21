@@ -205,7 +205,7 @@ function Cart() {
     }, [countChoosens, selectedKeys, finalPrices]);
 
     return (
-        <section className="mt-[100px] lg:px-24 py-6 px-4"> 
+        <section className="lg:px-24 py-6 px-4"> 
             <HaveSpinner showSpinner={loadedData}>
                 <>
                     <h1 className="flex items-center font-bold text-xl mb-4">
