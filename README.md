@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# BicycleStore - Website Bán Xe Đạp
+## Công nghệ sử dụng
+- ReactJS, React Router Dom, Redux, Redux-Thunk, Formik, Axios, Yup
+- TailwindCSS, NextUI, AntDesign
+## Chức năng
+- Cho phép người dùng tạo tài khoản, đăng nhập, quên mật khẩu, đổi mật khẩu
+- Cho phép người dùng đổi thông tin cá nhân như first-name, last-name, avatar,...
+- Cho phép người dùng xem được các sản phẩm có trong cửa hàng, có phân trang, có lọc với nhiều tiêu chí như category, color, size,...
+- Cho phép người dùng xem được chi tiết sản phẩm
+- Cho phép người dùng bình luận đối với một sản phẩm bất kì và xem được các bình luận về sản phẩm đó, có phân trang
+- Cho phép người dùng thêm sản phẩm vào giỏ hàng, xem giỏ hàng, xóa sản phẩm khỏi giỏ hàng
+- Cho phép người dùng thực hiện chức năng thanh toán
+- Cho phép người dùng xem các đơn hàng và xem chi tiết từng đơn hàng đã đặt, có phân trang
+- Cho phép người dùng truy cập được website trên nhiều thiết bị như laptop, PC, android, ios,...
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Các giao diện trong website
+## Trang đăng ký
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/c7ecc9a1-2375-4879-9f63-4f573bb0ecbd)
 
-## Available Scripts
+## Trang đăng nhập
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/398664e9-5b51-41a2-8703-ce3a7a1abbdb)
 
-In the project directory, you can run:
+## Trang chủ trước khi đăng nhập
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/90ca1a5c-9499-483f-9485-5833f9cf7390)
 
-### `npm start`
+## Trang chủ sau khi đăng nhập
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/05b4cbd3-0d6d-4b39-b577-d1d2b42720a2)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Trang giới thiệu
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/5edcaa63-dd8e-4779-a773-84c50e3d3c91)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Trang cửa hàng với nhiều điều kiện lọc kết hợp
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/a9e69fc2-5d15-42c8-9f9a-5860e631f2a9)
 
-### `npm test`
+## Trang chi tiết sản phẩm
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/73efe1ce-f383-45e0-b641-0e690e53a3f9)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Trang liên hệ
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/66db4557-cd17-46c9-97e2-68a78696076a)
 
-### `npm run build`
+## Trang thông tin cá nhân
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/696a9b63-ed75-489a-9f71-472c64bd49d2)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Trang đổi mật khẩu
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/769840dc-8080-4863-87a2-630ffab2973c)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Popup giỏ hàng
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/c499f726-7fbc-4567-bbfd-8fbf2574c9b5)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Trang giỏ hàng
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/897f2528-ed4f-4b58-91c3-114b7205495f)
 
-### `npm run eject`
+## Trang thanh toán
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/b7598969-21c3-4457-849f-b52639469ebf)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Comment sản phẩm
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/30304673-eef3-4284-9d02-155a77f324ad)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Trang đơn hàng
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/3d9fe330-5bbd-4621-982b-9fcbb33421f4)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Trang xem chi tiết đơn hàng
+![image](https://github.com/ThaiVanHandSome/bicycle_store_frontend/assets/121508568/580e2615-7e0b-40ce-b929-9e5ed389f20c)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
