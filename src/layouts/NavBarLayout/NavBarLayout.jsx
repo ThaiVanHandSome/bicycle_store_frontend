@@ -10,6 +10,10 @@ import clsx from "clsx";
 
 function NavBarLayout({ children }) {
     let location = useLocation();
+
+    const queryParams = new URLSearchParams();
+    queryParams.append('page', 0);
+    queryParams.append('size', 1);
     
     const [routeActive, setRouteActive] = useState(routes.user);
     useEffect(() => {
@@ -24,7 +28,7 @@ function NavBarLayout({ children }) {
         <section>
             <Header />
             <section className="flex mt-[100px]">
-                <nav className="w-[400px] flex flex-col py-6 px-12 bg-gray-200 me-4">
+                <nav className="hidden lg:flex w-[400px] flex-col py-6 px-12 bg-gray-200 me-4">
                     <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
                         "text-pri": routeActive === routes.user
                     })} to={routes.user}>
@@ -39,13 +43,10 @@ function NavBarLayout({ children }) {
                     </Link>
                     <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
                         "text-pri": routeActive === routes.purchase
-                    })} to={routes.purchase}>
+                    })} to={`/purchase?${queryParams.toString()}`}>
                         <FontAwesomeIcon className="me-2 text-xl" icon={faMoneyBillAlt}/>
                         <span>Đơn hàng</span>
                     </Link>
-                    <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
-                        "text-pri": routeActive === routes.favouriteProducts
-                    })}>Sản phẩm yêu thích</Link>
                 </nav>
                 <section className="flex-1">
                     { children }

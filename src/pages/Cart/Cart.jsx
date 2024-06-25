@@ -226,7 +226,7 @@ function Cart() {
                                     cart.map((item, index) => (
                                         <TableRow key={index}>
                                             <TableCell>
-                                                <img className="w-[100px]" alt="bicycle-image" src={item.bicycle.image}/>
+                                                <img className="w-[100px]" alt="bicycle-img" src={item.bicycle.image}/>
                                             </TableCell>
                                             <TableCell>
                                                 <div>

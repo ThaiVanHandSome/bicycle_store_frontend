@@ -13,9 +13,9 @@ function ChangePassword() {
     const {handleTryCatch} = useTryCatch();
 
     return (
-        <section className="py-6">
+        <section className="py-6 px-2">
             <h1 className="font-bold text-xl mb-4">Thay đổi mật khẩu</h1>
-            <section className="w-1/2">
+            <section className="w-full lg:w-1/2">
                 <Formik
                     initialValues={{newPassword: "", newPasswordAgain: ""}}
                     validationSchema={Yup.object({
@@ -45,7 +45,7 @@ function ChangePassword() {
                     <Form>  
                         <MyPasswordInp label="Mật khẩu mới" name="newPassword"/>
                         <MyPasswordInp label="Nhập lại mật khẩu mới" name="newPasswordAgain"/>
-                        <ButtonCustom type="submit" radius="lg" className="mt-3">Cập nhật</ButtonCustom>
+                        <ButtonCustom type="submit" radius="lg" className="mt-3 w-full lg:w-1/3">Cập nhật</ButtonCustom>
                     </Form>
                 </Formik>
             </section>

@@ -82,12 +82,12 @@ function UserInfomation() {
 
     return (
         <HaveSpinner hideSpinner={isLoadedData}>
-            <section className="py-6">
+            <section className="py-6 px-2">
                 <h1 className="font-bold text-xl mb-4">
                     Thông tin cá nhân
                 </h1>
-                <section className="flex">
-                    <section className="w-1/2">
+                <section className="flex flex-col-reverse lg:flex-row">
+                    <section className="w-full lg:w-1/2">
                         <Formik
                             initialValues={{firstName: getDataOfField(user.current?.firstName), lastName: getDataOfField(user.current?.lastName), email: getDataOfField(user.current?.email), phoneNumber: getDataOfField(user.current?.phoneNumber)}}
                             validationSchema={Yup.object({
@@ -139,11 +139,11 @@ function UserInfomation() {
                                     <Radio value={1} name="gender">Nam</Radio>
                                     <Radio value={0} name="gender">Nữ</Radio>
                                 </RadioGroup>
-                                <ButtonCustom type="submit" radius="lg">Cập nhật</ButtonCustom>
+                                <ButtonCustom type="submit" radius="lg" className="w-full lg:w-1/3">Cập nhật</ButtonCustom>
                             </Form>
                         </Formik>
                     </section>
-                    <section className="flex-1 flex items-center justify-center flex-col">
+                    <section className="flex-1 flex items-center justify-center flex-col mb-4 lg:mb-0">
                         <input ref={inpRef} type="file" onChange={(e) => handleFileChange(e)} className="hidden"/>
                         <img ref={imgRef} className="w-[300px] h-[300px] rounded-full" alt="avatar" src={userInfo?.avatar}/>
                         <Button color="secondary" className="mt-4" onClick={handleChooseAvatar}>Chọn ảnh đại diện</Button>

@@ -11,7 +11,8 @@ const routes = {
   user: "/user",
   changePassword: "/change-password",
   purchase: "/purchase",
-  favouriteProducts: "/favourite-products"
+  favouriteProducts: "/favourite-products",
+  purchaseDetail: "/purchase-detail/:id"
 };
 
 export default routes;

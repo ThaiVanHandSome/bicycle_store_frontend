@@ -178,6 +178,16 @@ function Header() {
                       Thông tin cá nhân
                     </Link>
                   </DropdownItem>
+                  <DropdownItem className="border-0" key="user">
+                    <Link to={routes.changePassword} className="block w-full h-full">
+                      Thay đổi mật khẩu
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem className="border-0" key="user">
+                    <Link to={routes.purchase} className="block w-full h-full">
+                      Đơn hàng
+                    </Link>
+                  </DropdownItem>
                   <DropdownItem className="border-0" key="logout" onClick={handleLogout}>
                     Đăng xuất
                   </DropdownItem>
@@ -257,7 +267,7 @@ function Header() {
                     <UserIcon width={20} height={20} />
                   ) : (
                     <div className="flex items-center">
-                      <img alt="avatar" className="w-[30px] rounded-full me-2" src={user.avatar}/>
+                      <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
                       <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
                     </div>
                   )}
@@ -265,6 +275,21 @@ function Header() {
               </DropdownTrigger>
               {localStorage.getItem("accessToken") ? (
                 <DropdownMenu variant="faded" aria-label="Static Actions">
+                  <DropdownItem className="border-0" key="user">
+                    <Link to={routes.user} className="block w-full h-full">
+                      Thông tin cá nhân
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem className="border-0" key="user">
+                    <Link to={routes.changePassword} className="block w-full h-full">
+                      Thay đổi mật khẩu
+                    </Link>
+                  </DropdownItem>
+                  <DropdownItem className="border-0" key="user">
+                    <Link to={routes.purchase} className="block w-full h-full">
+                      Đơn hàng
+                    </Link>
+                  </DropdownItem>
                   <DropdownItem className="border-0" key="copy" onClick={handleLogout}>
                     Đăng xuất
                   </DropdownItem>
