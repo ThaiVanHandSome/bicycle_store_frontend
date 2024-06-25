@@ -10,8 +10,13 @@ import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
 import { authenticate } from "~/services/apiServices/AuthService";
 import { useTryCatch } from "~/hooks/useTryCatch";
+import { useDispatch } from "react-redux";
+import { fetchCart } from "~/store/actions/cartAction";
+import { fetchUser } from "~/store/actions/userAction";
 
 function Login() {
+
+    // const dispatch = useDispatch();
 
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
@@ -54,6 +59,8 @@ function Login() {
                             if(res.status === "success") {
                                 localStorage.setItem("accessToken", res.data.accessToken);
                                 localStorage.setItem("refreshToken", res.data.refreshToken);
+                                // dispatch(fetchCart());
+                                // dispatch(fetchUser());
                                 // openNotification("success", "Thông báo", res.message);
                                 startRefreshToken();
                                 window.location.href = "http://localhost:3000/bicycle_store_frontend#/";

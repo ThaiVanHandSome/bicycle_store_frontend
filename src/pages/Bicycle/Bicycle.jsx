@@ -1,16 +1,16 @@
 import { faCircleArrowLeft, faCircleArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Divider, Radio, RadioGroup, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs } from "@nextui-org/react";
+import { Button, Divider, Input, Pagination, Radio, RadioGroup, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs, User } from "@nextui-org/react";
 import { Carousel } from "antd";
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import ButtonCustom from "~/components/ButtonCustom";
 import ProductCard from "~/components/ProductCard";
 import { useToast } from "~/context/ToastContext";
 import { addToCart } from "~/services/apiServices/BicycleProductService";
-import { getAllColors, getAllSizes, getBicycleById, getBicycleRelevant } from "~/services/apiServices/BicycleService";
+import { getAllColors, getAllCommentsOfBicycle, getAllSizes, getBicycleById, getBicycleRelevant } from "~/services/apiServices/BicycleService";
 import { getAllCategoriesOfBicycle } from "~/services/apiServices/CategoryService";
 import { checkoutProcessor } from "~/services/apiServices/OrderService";
 import { fetchCart } from "~/store/actions/cartAction";
@@ -18,13 +18,19 @@ import formatToVND from "~/utils/formatToVND";
 import { useTryCatch } from "~/hooks/useTryCatch";
 import { isPossitiveNumber } from "~/utils/number";
 import HaveSpinner from "~/components/HaveSpinner";
+import { addComment } from "~/services/apiServices/BicycleCommentService";
+import { useOverlay } from "~/context/OverlayContext";
+import { formatDay } from "~/utils/formatDay";
 
 function Bicycle() {
     // toast
     const openNotification = useToast();
 
+    const [openOverlay, hideOverlay] = useOverlay();
+
     // redux
     const dispatch = useDispatch();
+    const user = useSelector((state) => state.user.info);
 
     const {handleTryCatch} = useTryCatch();
 
@@ -44,6 +50,11 @@ function Bicycle() {
     const [showDesc, setShowDesc] = useState(true);
 
     const [carouselIndexChecked, setCarouselIndexChecked] = useState(0);
+
+    const [comments, setComments] = useState("");
+    const [commentVal, setCommentVal] = useState("");
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(3);
 
     // carousel
     const carouselRef = useRef();
@@ -151,6 +162,9 @@ function Bicycle() {
 
                 const bicycleCategoriesRes = await getAllCategoriesOfBicycle(bicycleRes.data.idBicycle);
                 if(bicycleCategoriesRes.status === "success") setBicycleCategories(bicycleCategoriesRes.data);  
+
+                const bicycleCommentsRes = await getAllCommentsOfBicycle(parseInt(id), 0, 3);
+                if(bicycleCommentsRes.status === "success") setComments(bicycleCommentsRes.data || []);
                 
                 setIsLoadedData(true);
             }
@@ -195,8 +209,42 @@ function Bicycle() {
         });
     }
 
+    const handleAddComment = async () => {
+        if(commentVal.length === 0) {
+            openNotification("error", "Thông báo", "Bạn chưa nhập nội dung comment!");
+            return;
+        }
+        await handleTryCatch(async () => {
+            const data = {
+                content: commentVal,
+                idBicycle: parseInt(id)
+            }
+            openOverlay();
+            const res = await addComment(data);
+            hideOverlay();
+            if(res.status === "success") {
+                openNotification("success", "Thông báo", res.message);
+                const bicycleCommentsRes = await getAllCommentsOfBicycle(parseInt(id), 0, 3);
+                if(bicycleCommentsRes.status === "success") setComments(bicycleCommentsRes.data || []);
+                setCommentVal("");
+                return;
+            }
+            openNotification("error", "Thông báo", res.message);
+        });
+    }
+
+    const handleChangePage = async (page) => {
+        await handleTryCatch(async () => {
+            const bicycleCommentsRes = await getAllCommentsOfBicycle(parseInt(id), page - 1, size);
+            if(bicycleCommentsRes.status === "success") setComments(bicycleCommentsRes.data || []);
+            setPage(page - 1);
+        })
+    }
+
      // reload data mỗi khi id được truyền vào thay đổi
     useEffect(() => {
+        setPage(0);
+        setSize(3);
         getInitData();
     }, [id]);
 
@@ -290,6 +338,37 @@ function Bicycle() {
                             </Tabs>
                             <div className="mt-4 text-justify px-4">
                                 {showDesc && bicycle?.description}
+                                {!showDesc && localStorage.getItem("accessToken") && (
+
+                                    <div>
+                                        <div className="flex">
+                                            <User avatarProps={{
+                                                src: user.avatar
+                                            }}/>
+                                            <Input className="me-2" value={commentVal} onChange={(e) => setCommentVal(e.target.value)}/>
+                                            <Button variant="ghost" color="secondary" onClick={handleAddComment}>Gửi</Button>
+                                        </div>
+                                        <Divider className="w-full my-2"/>
+                                        <div className="mt-4 mb-3">
+                                            {
+                                                comments.content.map((comment) => (
+                                                    <div className="mb-2">
+                                                        <div className="flex items-center">
+                                                            <User className="me-2" name={comment.fullName} avatarProps={{
+                                                                src: comment.avatar
+                                                            }}/>
+                                                            <p className="text-sm text-slate-500">{formatDay(comment.createAt[0], comment.createAt[1], comment.createAt[2])}</p>
+                                                        </div>
+                                                        <p className="ms-12">{comment.content}</p>
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                        <div className="w-full flex items-center justify-center">
+                                            <Pagination initialPage={page + 1} total={comments.totalPages} onChange={(val) => handleChangePage(val)}/>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                         <div className="flex-1 lg:ms-6">

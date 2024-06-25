@@ -12,7 +12,9 @@ const routes = {
   changePassword: "/change-password",
   purchase: "/purchase",
   favouriteProducts: "/favourite-products",
-  purchaseDetail: "/purchase-detail/:id"
+  purchaseDetail: "/purchase-detail/:id",
+  introduce: "/introduce",
+  contact: "/contact"
 };
 
 export default routes;

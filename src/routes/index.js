@@ -13,6 +13,8 @@ import NavBarLayout from "~/layouts/NavBarLayout";
 import ChangePassword from "~/pages/ChangePassword";
 import Purchase from "~/pages/Purchase";
 import PurchaseDetail from "~/pages/PurchaseDetail/PurchaseDetail";
+import Introduce from "~/pages/Introduce";
+import Contact from "~/pages/Contact";
 
 const publicRoutes = [
   {
@@ -74,6 +76,16 @@ const publicRoutes = [
     path: routes.purchaseDetail,
     component: PurchaseDetail,
     layout: NavBarLayout
+  },
+  {
+    path: routes.introduce,
+    component: Introduce,
+    layout: DefaultLayout
+  },
+  {
+    path: routes.contact,
+    component: Contact,
+    layout: DefaultLayout
   }
 ];
 

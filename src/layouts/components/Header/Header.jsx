@@ -11,11 +11,13 @@ import {
   Listbox,
   ListboxItem,
   Tooltip,
+  User,
 } from "@nextui-org/react";
 import { Drawer } from "antd";
+import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
 import { useAuth } from "~/context/RefreshTokenContext";
@@ -26,6 +28,7 @@ import { clearUserInfo } from "~/store/user/userSlice";
 import formatToVND from "~/utils/formatToVND";
 
 function Header() {
+  let location = useLocation();
   const openNotification = useToast();
   const [ _ , stopRefreshToken] = useAuth();
 
@@ -33,6 +36,8 @@ function Header() {
   const items = useSelector((state) => state.cart.items); 
   const cartStatus = useSelector((state) => state.cart.status);
   const user = useSelector((state) => state.user.info);
+
+  const [routeActive, setRouteActive] = useState(routes.user);
 
   // Drawer of Bar Icon
   const [open, setOpen] = useState(false);
@@ -63,9 +68,17 @@ function Header() {
     }
   }
 
+  const queryParams = new URLSearchParams();
+  queryParams.append('page', 0);
+  queryParams.append('size', 1);
+
   useEffect(() => {
     handleGetInitData();
   }, []);
+
+  useEffect(() => {
+    setRouteActive(location.pathname);
+}, [location]);
 
   return (
     <section className="fixed left-0 right-0 top-0 z-30 min-h-[60px] bg-white xl:min-h-[100px] xl:shadow-lg">
@@ -90,27 +103,26 @@ function Header() {
           />
           <Listbox className="m-[-12px] p-0">
             <ListboxItem>
-              <a href="#" className="header-nav-item-bar">
+              <a href="#" className={clsx("header-nav-item-bar", {
+                "text-pri": routes.home === routeActive
+              })}>
                 TRANG CHỦ
               </a>
             </ListboxItem>
             <ListboxItem>
-              <a href="#" className="header-nav-item-bar">
-                GIỚI THIỆU
-              </a>
+              <Link to={routes.introduce} className={clsx("header-nav-item-bar", {
+                "text-pri": routes.introduce === routeActive
+              })}>GIỚI THIỆU</Link>
             </ListboxItem>
             <ListboxItem>
-              <Link to={"/category/all"}  className="header-nav-item-bar">CỬA HÀNG</Link>
+              <Link to={"/category/all"}  className={clsx("header-nav-item-bar", {
+                "text-pri": "/category/all" === routeActive
+              })}>CỬA HÀNG</Link>
             </ListboxItem>
             <ListboxItem>
-              <a href="#" className="header-nav-item-bar">
-                CÂU HỎI THƯỜNG GẶP
-              </a>
-            </ListboxItem>
-            <ListboxItem>
-              <a href="#" className="header-nav-item-bar">
-                LIÊN HỆ
-              </a>
+              <Link to={routes.contact} className={clsx("header-nav-item-bar", {
+                "text-pri": routes.contact === routeActive
+              })}>LIÊN HỆ</Link>
             </ListboxItem>
           </Listbox>
         </Drawer>
@@ -126,32 +138,31 @@ function Header() {
         <nav className="hidden h-full xl:block">
           <ul className="flex h-full items-center">
             <li>
-              <a href="#" className="header-nav-item">
+              <a href="#" className={clsx("header-nav-item", {
+                "text-pri": routes.home === routeActive
+              })}>
                 TRANG CHỦ
               </a>
             </li>
             <li>
-              <a href="#" className="header-nav-item">
-                GIỚI THIỆU
-              </a>
+              <Link to={routes.introduce} className={clsx("header-nav-item", {
+                "text-pri": routes.introduce === routeActive
+              })}>GIỚI THIỆU</Link>
             </li>
             <li>
               <Link
                 to={"/category/all"}
-                className="header-nav-item group relative block"
+                className={clsx("header-nav-item group relative block", {
+                  "text-pri": "/category/all" === routeActive
+                })}
               >
                 CỬA HÀNG
               </Link>
             </li>
             <li>
-              <a href="#" className="header-nav-item">
-                CÂU HỎI THƯỜNG GẶP
-              </a>
-            </li>
-            <li>
-              <a href="#" className="header-nav-item">
-                LIÊN HỆ
-              </a>
+              <Link to={routes.contact} className={clsx("header-nav-item", {
+                "text-pri": routes.contact === routeActive
+              })}>LIÊN HỆ</Link>
             </li>
           </ul>
         </nav>
@@ -164,10 +175,13 @@ function Header() {
                   {user === null ? (
                     <UserIcon width={20} height={20} />
                   ) : (
-                    <div className="flex items-center">
-                      <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
-                      <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
-                    </div>
+                    // <div className="flex items-center">
+                    //   <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
+                    //   <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
+                    // </div>
+                    <User name={user.firstName + " " + user.lastName } avatarProps={{
+                      src: user.avatar
+                    }}/>
                   )}
                 </div>
               </DropdownTrigger>
@@ -184,7 +198,7 @@ function Header() {
                     </Link>
                   </DropdownItem>
                   <DropdownItem className="border-0" key="user">
-                    <Link to={routes.purchase} className="block w-full h-full">
+                    <Link to={`/purchase?${queryParams.toString()}`} className="block w-full h-full">
                       Đơn hàng
                     </Link>
                   </DropdownItem>
@@ -248,7 +262,6 @@ function Header() {
                         <p className="absolute -top-1/2 -right-1/2 w-[20px] h-[20px] text-sm font-bold bg-white text-red-600 rounded-full flex items-center justify-center shadow-md">{items.length > 9 ? "9+" : items.length}</p> 
                       )
                     }
-                    
                   </div>
                 </Link>
               </div>
@@ -266,10 +279,13 @@ function Header() {
                   {user === null ? (
                     <UserIcon width={20} height={20} />
                   ) : (
-                    <div className="flex items-center">
-                      <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
-                      <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
-                    </div>
+                    // <div className="flex items-center">
+                    //   <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
+                    //   <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
+                    // </div>
+                    <User name={user.firstName + " " + user.lastName } avatarProps={{
+                      src: user.avatar
+                    }}/>
                   )}
                 </div>
               </DropdownTrigger>

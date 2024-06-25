@@ -27,7 +27,7 @@ function NavBarLayout({ children }) {
     return (
         <section>
             <Header />
-            <section className="flex mt-[100px]">
+            <section className="w-full flex mt-[100px]">
                 <nav className="hidden lg:flex w-[400px] flex-col py-6 px-12 bg-gray-200 me-4">
                     <Link className={clsx("flex items-center w-full font-bold mb-2 hover:text-pri transition-all", {
                         "text-pri": routeActive === routes.user
@@ -48,7 +48,7 @@ function NavBarLayout({ children }) {
                         <span>Đơn hàng</span>
                     </Link>
                 </nav>
-                <section className="flex-1">
+                <section className="flex-1 w-full">
                     { children }
                 </section>
             </section>

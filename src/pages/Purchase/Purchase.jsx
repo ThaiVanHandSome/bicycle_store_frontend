@@ -46,12 +46,12 @@ function Purchase() {
                 {
                     orders.map((order) => (
                         <section key={order.idOrder} className="px-3 py-4 rounded-xl shadow-lg bg-slate-100 mb-8">
-                            <div className="flex items-center justify-between px-2">
-                                <div className="text-sm">   
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between px-2">
+                                <div className="text-sm mb-2 lg:mb-0">   
                                     <span className="font-bold me-2 text-pri">Mã đơn hàng: {order.idOrder}</span>
                                     <span className="text-slate-400">Ngày tạo: {formatDay(order.orderedAt[0], order.orderedAt[1], order.orderedAt[2])}</span>
                                 </div>
-                                <div className="text-sm px-2 py-1 bg-slate-400 rounded-lg text-white">
+                                <div className="w-1/3 lg:w-auto text-sm px-2 py-1 bg-slate-400 rounded-lg text-white">
                                     <span>{getOrderState(order.orderState)}</span>
                                 </div>
                             </div>
@@ -85,7 +85,9 @@ function Purchase() {
                         </section>
                     ))
                 }
-                <Pagination isCompact showControls total={pageRes.totalPages} initialPage={page + 1} onChange={handleChangePage}/>
+                <div className="w-full flex items-center justify-center lg:justify-start">
+                    <Pagination isCompact showControls total={pageRes.totalPages} initialPage={page + 1} onChange={handleChangePage}/>
+                </div>
             </section>
         </HaveSpinner>
     );
