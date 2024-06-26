@@ -2,7 +2,7 @@ import axios from "axios";
 import { decodeJwtPayload } from "./jwt";
 
 const request = axios.create({
-  baseURL: "http://localhost:8989/api/v1/",
+  baseURL: "https://bicycle-store-backend-render.onrender.com/api/v1/",
   timeout: 10000,
 });
 
