@@ -3,7 +3,7 @@ import { decodeJwtPayload } from "./jwt";
 
 const request = axios.create({
   baseURL: "https://bicycle-store-backend-render.onrender.com/api/v1/",
-  timeout: 10000,
+  timeout: 200000,
 });
 
 const isTokenExpired = (token) => {
