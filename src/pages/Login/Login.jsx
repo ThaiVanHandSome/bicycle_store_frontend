@@ -63,7 +63,7 @@ function Login() {
                                 // dispatch(fetchUser());
                                 // openNotification("success", "Thông báo", res.message);
                                 startRefreshToken();
-                                window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
+                                window.location.href = process.env.BASE_URL;
                                 return;
                             }
                             openNotification("error", "Thông báo", res.message);

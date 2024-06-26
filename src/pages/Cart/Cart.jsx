@@ -177,7 +177,7 @@ function Cart() {
                 return item !== undefined;
             })
         localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
-        window.location.href="http://localhost:3000/bicycle_store_frontend#/payment";
+        window.location.href=process.env.BASE_URL + "/payment";
     }
 
     useEffect(() => {

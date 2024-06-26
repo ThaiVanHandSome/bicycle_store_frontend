@@ -56,7 +56,7 @@ function Header() {
     dispatch(fetchCart());
     dispatch(clearUserInfo());
     stopRefreshToken();
-    window.location.href = "http://localhost:3000/bicycle_store_frontend#/login";
+    window.location.href = process.env.BASE_URL + "/login";
     openNotification("success", "Thông báo", "Đăng xuất thành công!");
   }
 

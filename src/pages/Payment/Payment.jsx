@@ -143,7 +143,7 @@ function Payment() {
                                     if(res.status === "success") {
                                         openNotification("success", "Thông báo", res.message);
                                         localStorage.removeItem("productsSelected");
-                                        window.location.href = "http://localhost:3000/bicycle_store_frontend#/";
+                                        window.location.href = process.env.BASE_URL;
                                         return;
                                     }
                                     openNotification("error", "Thông báo", res.message);
