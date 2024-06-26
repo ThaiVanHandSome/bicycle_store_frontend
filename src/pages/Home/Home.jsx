@@ -287,7 +287,7 @@ function Home() {
                           <div
                             ref={bicycleRefs.current[index]}
                             className={clsx(
-                              "my-4 w-full  px-4  lg:w-1/2 xl:w-1/3",
+                              "my-4 w-full px-2 lg:px-4  lg:w-1/2 xl:w-1/3",
                               {
                                 "translate-y-36 opacity-0":
                                   !isViewedBicycles.includes(index),

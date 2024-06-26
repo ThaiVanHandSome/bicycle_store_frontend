@@ -24,12 +24,12 @@ function Login() {
 
     const {handleTryCatch} = useTryCatch();
 
-    return (<section className="relative px-24 py-6">
+    return (<section className="relative lg:px-24 px-2 py-6">
         <section className="rounded-xl px-6 py-2 shadow-lg flex">
             <div className="w-1/2 hidden lg:block">
                 <img alt="bicycle-bg" src={require("~/assets/images/sliders/slider-02.png")} className="w-full"/>
             </div>
-            <div className="ms-10 flex-1">
+            <div className="lg:ms-10 ms-0 flex-1">
                 <h1 className="text-5xl font-bold text-pri text-center mb-4">Đăng nhập</h1>
                 <Formik
                     initialValues={{ email: '', password: '' }}

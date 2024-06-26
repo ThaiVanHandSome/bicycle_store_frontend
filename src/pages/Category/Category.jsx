@@ -385,7 +385,7 @@ function Categories() {
                 <>
                   <div className="flex flex-wrap">
                     {bicycles.map((bicycle, index) => (
-                      <div className="mb-6 w-full md:w-1/2 xl:w-1/3 px-3">
+                      <div className="mb-6 w-full md:w-1/2 xl:w-1/3 px-2 lg:px-3">
                         <ProductCard bicycle={bicycle} />
                       </div>
                     ))}
