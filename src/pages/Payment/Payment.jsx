@@ -143,7 +143,7 @@ function Payment() {
                                     if(res.status === "success") {
                                         openNotification("success", "Thông báo", res.message);
                                         localStorage.removeItem("productsSelected");
-                                        window.location.href = process.env.BASE_URL;
+                                        window.location.href = "https://bicycle-store-frontend.vercel.app";
                                         return;
                                     }
                                     openNotification("error", "Thông báo", res.message);

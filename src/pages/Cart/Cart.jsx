@@ -177,7 +177,7 @@ function Cart() {
                 return item !== undefined;
             })
         localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
-        window.location.href=process.env.BASE_URL + "/payment";
+        window.location.href="https://bicycle-store-frontend.vercel.app/#/payment";
     }
 
     useEffect(() => {

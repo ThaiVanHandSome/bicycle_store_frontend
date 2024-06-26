@@ -30,7 +30,7 @@ function Purchase() {
         const queryParams = new URLSearchParams();
         queryParams.append('page', page - 1);
         queryParams.append('size', 1);
-        window.location.href = process.env.BASE_URL + `/purchase?${queryParams.toString()}`
+        window.location.href = `https://bicycle-store-frontend.vercel.app/#/purchase?${queryParams.toString()}`
     }
 
     useEffect(() => {

@@ -56,7 +56,7 @@ function Header() {
     dispatch(fetchCart());
     dispatch(clearUserInfo());
     stopRefreshToken();
-    window.location.href = process.env.BASE_URL + "/login";
+    window.location.href = "https://bicycle-store-frontend.vercel.app/#/login";
     openNotification("success", "Thông báo", "Đăng xuất thành công!");
   }
 

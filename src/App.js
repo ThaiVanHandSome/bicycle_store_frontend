@@ -3,6 +3,7 @@ import { publicRoutes } from "./routes";
 import { Fragment } from "react";
 
 function App() {
+  console.log(process.env.BASE_URL);
   return (
     <>
       <HashRouter>

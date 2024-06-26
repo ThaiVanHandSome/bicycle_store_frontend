@@ -63,7 +63,7 @@ function Login() {
                                 // dispatch(fetchUser());
                                 // openNotification("success", "Thông báo", res.message);
                                 startRefreshToken();
-                                window.location.href = process.env.BASE_URL;
+                                window.location.href = "https://bicycle-store-frontend.vercel.app";
                                 return;
                             }
                             openNotification("error", "Thông báo", res.message);
