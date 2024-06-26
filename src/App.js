@@ -5,7 +5,7 @@ import { Fragment } from "react";
 function App() {
   return (
     <>
-      <HashRouter forceRefresh={true}>
+      <HashRouter>
         <Routes>
           {publicRoutes.map(({ path, component, layout }, index) => {
             const Layout = layout || Fragment;
