@@ -1,8 +1,16 @@
 import { Spinner } from "@nextui-org/react";
+import { useEffect, useRef } from "react";
 
 function HaveSpinner({ hideSpinner, children }) {
+    const parRef = useRef();
+
+    useEffect(() => {
+        if (hideSpinner) {
+            parRef.current.style.minHeight = "100px";
+        }
+    },[hideSpinner]);
     return (
-        <section className="relative min-h-[100vh] w-full">
+        <section ref={parRef} className="relative min-h-[100vh] w-full">
             {
                 hideSpinner ? (
                     <>
