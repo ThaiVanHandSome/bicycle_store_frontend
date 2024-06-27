@@ -22,7 +22,7 @@ export const UserIcon = ({ width, height, className }) => (
   </svg>
 );
 
-export const GlassIcon = ({ width, height, className }) => (
+export const GlassIcon = ({ width, height, className, onClick }) => (
   <svg
     id="sportie-search"
     fill="none"
@@ -30,6 +30,7 @@ export const GlassIcon = ({ width, height, className }) => (
     width={width}
     height={height}
     className={className}
+    onClick={onClick}
   >
     <path
       d="M20.5 20.5l-6.344-6.344M8.5 16.5a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"

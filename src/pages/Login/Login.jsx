@@ -10,19 +10,30 @@ import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
 import { authenticate } from "~/services/apiServices/AuthService";
 import { useTryCatch } from "~/hooks/useTryCatch";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCart } from "~/store/actions/cartAction";
 import { fetchUser } from "~/store/actions/userAction";
+import { BASE_URL } from "~/constants";
 
 function Login() {
 
-    // const dispatch = useDispatch();
+    const dispatch = useDispatch();
+    const cartStatus = useSelector((state) => state.cart.status);
+    const userStatus = useSelector((state) => state.user.status);
 
     const openNotification = useToast();
     const [openOverlay, hideOverlay] = useOverlay();
     const [startRefreshToken, stopRefreshToken] = useAuth();
 
     const {handleTryCatch} = useTryCatch();
+
+    useEffect(() => {
+        if(cartStatus === "succeeded" && userStatus === "succeeded") {
+            startRefreshToken();
+            hideOverlay();
+            window.location.href = BASE_URL;
+        }
+    }, [cartStatus, userStatus]);
 
     return (<section className="relative lg:px-24 px-2 py-6">
         <section className="rounded-xl px-6 py-2 shadow-lg flex">
@@ -52,18 +63,14 @@ function Login() {
                             }
                             openOverlay();
                             const res = await authenticate(data);
-                            hideOverlay();
                             if(res === null) {
                                 openNotification("error", "Thông báo", "Email or Password Wrong!");
                             }
                             if(res.status === "success") {
                                 localStorage.setItem("accessToken", res.data.accessToken);
                                 localStorage.setItem("refreshToken", res.data.refreshToken);
-                                // dispatch(fetchCart());
-                                // dispatch(fetchUser());
-                                // openNotification("success", "Thông báo", res.message);
-                                startRefreshToken();
-                                window.location.href = "https://bicycle-store-frontend.vercel.app";
+                                dispatch(fetchUser());
+                                dispatch(fetchCart());
                                 return;
                             }
                             openNotification("error", "Thông báo", res.message);

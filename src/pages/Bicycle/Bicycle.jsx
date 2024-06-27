@@ -21,6 +21,7 @@ import HaveSpinner from "~/components/HaveSpinner";
 import { addComment } from "~/services/apiServices/BicycleCommentService";
 import { useOverlay } from "~/context/OverlayContext";
 import { formatDay } from "~/utils/formatDay";
+import { BASE_URL } from "~/constants";
 
 function Bicycle() {
     // toast
@@ -202,7 +203,7 @@ function Bicycle() {
                         }
                     ]
                     localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
-                    window.location.href = "https://bicycle-store-frontend.vercel.app/#/payment";
+                    window.location.href = BASE_URL + "/#/payment";
                     return;
                 }
                 openNotification("error", "Thông báo", res.message);

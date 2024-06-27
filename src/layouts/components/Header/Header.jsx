@@ -8,10 +8,13 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Input,
   Listbox,
   ListboxItem,
   Tooltip,
   User,
+  useDisclosure,
+  Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button
 } from "@nextui-org/react";
 import { Drawer } from "antd";
 import clsx from "clsx";
@@ -20,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { CartIcon, GlassIcon, UserIcon } from "~/components/Icon/Icon";
 import routes from "~/config/routes";
+import { BASE_URL } from "~/constants";
 import { useAuth } from "~/context/RefreshTokenContext";
 import { useToast } from "~/context/ToastContext";
 import { fetchCart } from "~/store/actions/cartAction";
@@ -38,6 +42,10 @@ function Header() {
   const user = useSelector((state) => state.user.info);
 
   const [routeActive, setRouteActive] = useState(routes.user);
+  const [searchVal, setSearchVal] = useState("");
+
+  // Modal search
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   // Drawer of Bar Icon
   const [open, setOpen] = useState(false);
@@ -56,15 +64,25 @@ function Header() {
     dispatch(fetchCart());
     dispatch(clearUserInfo());
     stopRefreshToken();
-    window.location.href = "https://bicycle-store-frontend.vercel.app/#/login";
+    window.location.href = BASE_URL + "/#/login";
     openNotification("success", "Thông báo", "Đăng xuất thành công!");
+  }
+
+  const handleSearch = () => {
+    if(searchVal.length === 0) {
+      openNotification("error", "Thông báo", "Bạn cần phải nhập thông tin để tìm kiếm!");
+      return;
+    }
+    const queryParamsSearch = new URLSearchParams();
+    queryParamsSearch.append("name", searchVal); 
+    window.location.href = BASE_URL + `/#/search?${queryParamsSearch.toString()}`;
   }
 
   const handleGetInitData = async () => {
     const jwt = localStorage.getItem("accessToken");
     if(jwt) {
-      dispatch(fetchCart());
-      dispatch(fetchUser());
+      if(!user) dispatch(fetchUser());
+      if(cartStatus !== "succeeded") dispatch(fetchCart());
     }
   }
 
@@ -87,6 +105,7 @@ function Header() {
         <div className="header-icon xl:hidden" onClick={showDrawer}>
           <FontAwesomeIcon icon={faBars} size="lg" />
         </div>
+        
         <Drawer
           title="Menu"
           placement="left"
@@ -127,47 +146,82 @@ function Header() {
           </Listbox>
         </Drawer>
 
-        <a href="#">
-          <img
-            alt="logo-bicycle"
-            src="https://bicyclesport.monamedia.net/wp-content/uploads/2021/09/mona-2-1-e1704788512221.png"
-            className="h-[56px] w-[56px] xl:h-[90px] xl:w-[90px]"
-          />
-        </a>
+        <div className="flex items-center">
+          <a href="#">
+            <img
+              alt="logo-bicycle"
+              src="https://bicyclesport.monamedia.net/wp-content/uploads/2021/09/mona-2-1-e1704788512221.png"
+              className="h-[56px] w-[56px] xl:h-[90px] xl:w-[90px] me-4"
+            />
+          </a>
 
-        <nav className="hidden h-full xl:block">
-          <ul className="flex h-full items-center">
-            <li>
-              <a href="#" className={clsx("header-nav-item", {
-                "text-pri": routes.home === routeActive
-              })}>
-                TRANG CHỦ
-              </a>
-            </li>
-            <li>
-              <Link to={routes.introduce} className={clsx("header-nav-item", {
-                "text-pri": routes.introduce === routeActive
-              })}>GIỚI THIỆU</Link>
-            </li>
-            <li>
-              <Link
-                to={"/category/all"}
-                className={clsx("header-nav-item group relative block", {
-                  "text-pri": "/category/all" === routeActive
-                })}
-              >
-                CỬA HÀNG
-              </Link>
-            </li>
-            <li>
-              <Link to={routes.contact} className={clsx("header-nav-item", {
-                "text-pri": routes.contact === routeActive
-              })}>LIÊN HỆ</Link>
-            </li>
-          </ul>
-        </nav>
+          <nav className="hidden h-full xl:block">
+            <ul className="flex h-full items-center">
+              <li>
+                <a href="#" className={clsx("header-nav-item", {
+                  "text-pri": routes.home === routeActive
+                })}>
+                  TRANG CHỦ
+                </a>
+              </li>
+              <li>
+                <Link to={routes.introduce} className={clsx("header-nav-item", {
+                  "text-pri": routes.introduce === routeActive
+                })}>GIỚI THIỆU</Link>
+              </li>
+              <li>
+                <Link
+                  to={"/category/all"}
+                  className={clsx("header-nav-item group relative block", {
+                    "text-pri": "/category/all" === routeActive
+                  })}
+                >
+                  CỬA HÀNG
+                </Link>
+              </li>
+              <li>
+                <Link to={routes.contact} className={clsx("header-nav-item", {
+                  "text-pri": routes.contact === routeActive
+                })}>LIÊN HỆ</Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <Modal 
+          isOpen={isOpen} 
+          placement="auto"
+          onOpenChange={onOpenChange} 
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">Nhập thông tin tìm kiếm?</ModalHeader>
+                <ModalBody>
+                  <Input value={searchVal} onChange={(e) => setSearchVal(e.target.value)} placeholder="Tìm kiếm..." startContent={
+                    <GlassIcon className="cursor-pointer" width={20} height={20}/>
+                  }/>
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Đóng
+                  </Button>
+                  <Button color="primary" onPress={handleSearch}>
+                    Tìm kiếm
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
 
         <div className="flex items-center justify-center">
+          <div className="header-icon">
+            <Input className="hidden lg:block" value={searchVal} onChange={(e) => setSearchVal(e.target.value)} placeholder="Tìm kiếm..." endContent={
+              <GlassIcon className="cursor-pointer" width={20} height={20} onClick={handleSearch}/>
+            }/>
+            <GlassIcon width={20} height={20} className="block lg:hidden" onClick={onOpen}/>
+          </div>
           <div className="header-icon hidden xl:block">
             <Dropdown>
               <DropdownTrigger>
@@ -175,10 +229,6 @@ function Header() {
                   {user === null ? (
                     <UserIcon width={20} height={20} />
                   ) : (
-                    // <div className="flex items-center">
-                    //   <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
-                    //   <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
-                    // </div>
                     <User name={user.firstName + " " + user.lastName } avatarProps={{
                       src: user.avatar
                     }}/>
@@ -217,9 +267,6 @@ function Header() {
                 </DropdownMenu>
               )}
             </Dropdown>
-          </div>
-          <div className="header-icon">
-            <GlassIcon width={20} height={20} />
           </div>
           <div className="header-icon hidden xl:block">
             <Tooltip
@@ -278,11 +325,7 @@ function Header() {
                 <div>
                   {user === null ? (
                     <UserIcon width={20} height={20} />
-                  ) : (
-                    // <div className="flex items-center">
-                    //   <img alt="avatar" className="w-[30px] h-[30px] rounded-full me-2" src={user.avatar}/>
-                    //   <p className="font-bold text-pri">{user.firstName + " " + user.lastName }</p>
-                    // </div>
+                  ) : (                                    
                     <User name={user.firstName + " " + user.lastName } avatarProps={{
                       src: user.avatar
                     }}/>
@@ -302,7 +345,7 @@ function Header() {
                     </Link>
                   </DropdownItem>
                   <DropdownItem className="border-0" key="user">
-                    <Link to={routes.purchase} className="block w-full h-full">
+                    <Link to={`/purchase?${queryParams.toString()}`} className="block w-full h-full">
                       Đơn hàng
                     </Link>
                   </DropdownItem>

@@ -14,7 +14,8 @@ const routes = {
   favouriteProducts: "/favourite-products",
   purchaseDetail: "/purchase-detail/:id",
   introduce: "/introduce",
-  contact: "/contact"
+  contact: "/contact",
+  search: "/search"
 };
 
 export default routes;

@@ -67,3 +67,11 @@ export const getAllCommentsOfBicycle = async (id, page, size) => {
   const res = await get(`bicycle/${id}/comments`, params);
   return res;
 }
+
+export const searchBicycle = async (name) => {
+  const params = {
+    name
+  };
+  const res = await get("bicycle/search", params);
+  return res;
+}

@@ -15,6 +15,7 @@ import Purchase from "~/pages/Purchase";
 import PurchaseDetail from "~/pages/PurchaseDetail/PurchaseDetail";
 import Introduce from "~/pages/Introduce";
 import Contact from "~/pages/Contact";
+import Search from "~/pages/Search";
 
 const publicRoutes = [
   {
@@ -85,6 +86,11 @@ const publicRoutes = [
   {
     path: routes.contact,
     component: Contact,
+    layout: DefaultLayout
+  },
+  {
+    path: routes.search,
+    component: Search,
     layout: DefaultLayout
   }
 ];

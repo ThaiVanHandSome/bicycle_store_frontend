@@ -2,7 +2,7 @@ import { Spinner } from "@nextui-org/react";
 
 function HaveSpinner({ hideSpinner, children }) {
     return (
-        <section className="relative min-h-[400px] w-full">
+        <section className="relative min-h-[100vh] w-full">
             {
                 hideSpinner ? (
                     <>

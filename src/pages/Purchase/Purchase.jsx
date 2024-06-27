@@ -2,6 +2,7 @@ import { Button, Divider, Pagination } from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import HaveSpinner from "~/components/HaveSpinner";
+import { BASE_URL } from "~/constants";
 import { getAllOrders } from "~/services/apiServices/OrderService";
 import { formatDay } from "~/utils/formatDay";
 import formatToVND from "~/utils/formatToVND";
@@ -30,7 +31,7 @@ function Purchase() {
         const queryParams = new URLSearchParams();
         queryParams.append('page', page - 1);
         queryParams.append('size', 1);
-        window.location.href = `https://bicycle-store-frontend.vercel.app/#/purchase?${queryParams.toString()}`
+        window.location.href =BASE_URL +  `/#/purchase?${queryParams.toString()}`
     }
 
     useEffect(() => {

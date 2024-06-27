@@ -10,6 +10,7 @@ import { deleteProducInCart, getCart } from "~/services/apiServices/CartService"
 import { fetchCart } from "~/store/actions/cartAction";
 import formatToVND from "~/utils/formatToVND";
 import { useTryCatch } from "~/hooks/useTryCatch";
+import { BASE_URL } from "~/constants";
 
 const columns = [
     {
@@ -177,7 +178,7 @@ function Cart() {
                 return item !== undefined;
             })
         localStorage.setItem("productsSelected", JSON.stringify(productsSelected));
-        window.location.href="https://bicycle-store-frontend.vercel.app/#/payment";
+        window.location.href=BASE_URL + "/#/payment";
     }
 
     useEffect(() => {

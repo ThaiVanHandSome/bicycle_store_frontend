@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import ButtonCustom from "~/components/ButtonCustom";
 import { MyTextInp } from "~/components/Form/FormItem";
 import HaveSpinner from "~/components/HaveSpinner";
+import { BASE_URL } from "~/constants";
 import { useOverlay } from "~/context/OverlayContext";
 import { useToast } from "~/context/ToastContext";
 import { useTryCatch } from "~/hooks/useTryCatch";
@@ -132,7 +133,7 @@ function Payment() {
                                         idPayMethod: payMethodChecked,
                                         totalQuantity: totalQuantity,
                                         totalPrice: totalPrice,
-                                        shipPrice: 0,
+                                        shipPrice: 15000,
                                         shipAddress: values.address,
                                         message: values.message,
                                         fullName: values.fullName,
@@ -143,7 +144,7 @@ function Payment() {
                                     if(res.status === "success") {
                                         openNotification("success", "Thông báo", res.message);
                                         localStorage.removeItem("productsSelected");
-                                        window.location.href = "https://bicycle-store-frontend.vercel.app";
+                                        window.location.href = BASE_URL;
                                         return;
                                     }
                                     openNotification("error", "Thông báo", res.message);
@@ -215,8 +216,8 @@ function Payment() {
                                 <div className="rounded-3xl shadow-lg px-4 py-2 mb-8 flex justify-end">
                                     <div className="font-bold">
                                         <p>Tổng tiền hàng: <span className="text-xl text-red-600">{formatToVND(totalPrice)}</span></p>
-                                        <p>Phí vận chuyển: <span className="text-xl text-red-600">{formatToVND(0)}</span></p>
-                                        <p>Tổng thanh toán: <span className="text-xl text-red-600">{formatToVND(totalPrice + 0)}</span></p>
+                                        <p>Phí vận chuyển: <span className="text-xl text-red-600">{formatToVND(15000)}</span></p>
+                                        <p>Tổng thanh toán: <span className="text-xl text-red-600">{formatToVND(totalPrice + 15000)}</span></p>
                                         <div className="flex justify-end my-4">
                                             <ButtonCustom type="submit" radius="lg">Thanh toán</ButtonCustom>
                                         </div>

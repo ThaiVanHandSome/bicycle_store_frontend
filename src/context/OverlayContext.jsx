@@ -9,21 +9,28 @@ export const useOverlay = () => useContext(OverlayContext);
 export const OverlayProvider = ({ children }) => {
     const spinnerRef = useRef();
     const overlayRef = useRef();
+    const parentRef = useRef();
 
     const openOverlay = () => {
+        const rect = parentRef.current.getBoundingClientRect();
         spinnerRef.current.style.display = "block";
+        console.log(`-${Math.floor(rect.top)}px`);
+        overlayRef.current.style.top = `${-1 * Math.floor(rect.top + 1)}px`;
         overlayRef.current.style.display = "block";
+        document.body.style.overflow = 'hidden';
     }
 
     const hideOverlay = () => {
         spinnerRef.current.style.display = "none";
         overlayRef.current.style.display = "none";
+        document.body.style.overflow = 'auto';
     }
     return (
         <OverlayContext.Provider value={[openOverlay, hideOverlay]}>
-            <div className="relative" >
-                <div ref={overlayRef} style={{backgroundColor: "rgba(0, 0, 0, 0.15)"}} className="hidden absolute top-[-100px] left-0 right-0 bottom-0 z-40"></div>
-                <Spinner ref={spinnerRef} color="warning" className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50"/>
+            <div className="relative" ref={parentRef}>
+                <div ref={overlayRef} style={{backgroundColor: "rgba(0, 0, 0, 0.15)"}} className="hidden absolute left-0 w-full h-[100vh] z-40">
+                    <Spinner ref={spinnerRef} color="warning" className="hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50"/>
+                </div>
                 {children}
             </div>
         </OverlayContext.Provider>

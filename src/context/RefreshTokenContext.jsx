@@ -44,7 +44,12 @@ export const AuthProvider = ( {children} ) => {
     useEffect(() => {
         const storedIdInterval = JSON.parse(localStorage.getItem('idInterval'));
         if(storedIdInterval) {
-            startRefreshToken();
+            try {
+                startRefreshToken();
+            } catch (error) {
+                console.error(error);
+
+            }
             setIdInterval(storedIdInterval);
         }
 
