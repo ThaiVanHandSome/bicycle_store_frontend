@@ -6,7 +6,7 @@ function HaveSpinner({ hideSpinner, children }) {
 
     useEffect(() => {
         if (hideSpinner) {
-            parRef.current.style.minHeight = "400px";
+            parRef.current.style.minHeight = "800px";
         }
     },[hideSpinner]);
     return (
