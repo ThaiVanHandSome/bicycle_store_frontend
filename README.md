@@ -11,6 +11,7 @@
 - Cho phép người dùng thêm sản phẩm vào giỏ hàng, xem giỏ hàng, xóa sản phẩm khỏi giỏ hàng
 - Cho phép người dùng thực hiện chức năng thanh toán
 - Cho phép người dùng xem các đơn hàng và xem chi tiết từng đơn hàng đã đặt, có phân trang
+- Cho phép người dùng tìm kiếm sản phẩm theo tên
 - Cho phép người dùng truy cập được website trên nhiều thiết bị như laptop, PC, android, ios,...
 
 # Các giao diện trong website
