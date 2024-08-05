@@ -16,20 +16,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import ProductCard from "~/components/ProductCard";
 import HaveSpinner from "~/components/HaveSpinner";
-import { useToast } from "~/context/ToastContext";
 import { useTryCatch } from "~/hooks/useTryCatch";
 
 const cx = classNames.bind(styles);
 
 function Home() {
-  const openNotification = useToast();
-
-  const {handleTryCatch} = useTryCatch();
+  const { handleTryCatch } = useTryCatch();
 
   const [slider, setSlider] = useState(0);
-  const [categories, setAllCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [bicyclesOfCategory, setBicyclesOfCategory] = useState([]);
-  const [loadingSuccessful, setLoadingSuccessful] = useState(false);
+  const [loadingSuccess, setLoadingSuccess] = useState(false);
   const [loadingBicycle, setLoadingBicycle] = useState(false);
   const [isViewedBicycles, setIsViewedBicycles] = useState([]);
   const [categoryChecked, setCategoryChecked] = useState(1);
@@ -56,7 +53,7 @@ function Home() {
   const handleGetAllCategories = async () => {
     const categories = await handleTryCatch(async () => {
       const categoriesRes = await getAllCategories();
-      if(categoriesRes?.status === "success") {
+      if (categoriesRes?.status === "success") {
         const obj = {};
         categoriesRes?.data.forEach((category, index) => {
           obj[index] = category.idBicycleCategory;
@@ -72,8 +69,7 @@ function Home() {
     await handleTryCatch(async () => {
       const categories = await handleGetAllCategories();
       await handleGetBicyclesByCategory(categoryChecked);
-      setLoadingSuccessful(true);
-      setAllCategories(categories || []);
+      setCategories(categories || []);
     });
   };
 
@@ -82,12 +78,12 @@ function Home() {
       setCategoryChecked(idBicycleCategory);
       setLoadingBicycle(false);
       let bicyclesRes = await getAllBicyclesByCategory(idBicycleCategory);
-      if(bicyclesRes?.status === "success") {
+      if (bicyclesRes?.status === "success") {
         let bicycles = bicyclesRes?.data;
         bicycles = bicycles.length > 6 ? bicycles.slice(0, 6) : bicycles;
         bicycleRefs.current = Array(Math.min(bicycles.length, 6))
-        .fill()
-        .map((_, i) => bicycleRefs.current[i] || React.createRef());
+          .fill()
+          .map((_, i) => bicycleRefs.current[i] || React.createRef());
         setLoadingBicycle(true);
         setBicyclesOfCategory(bicycles);
       }
@@ -99,6 +95,7 @@ function Home() {
     brandRefs.current = Array(brand_data.length)
       .fill()
       .map((_, i) => brandRefs.current[i] || React.createRef());
+    setLoadingSuccess(true);
   }, []);
 
   const handleAboutUsImage = () => {
@@ -192,11 +189,11 @@ function Home() {
       window.removeEventListener("scroll", handleBgImage);
       window.removeEventListener("scroll", handleBtnMore);
     };
-  }, [loadingSuccessful]);
+  }, []);
 
   return (
     <section className="relative mt-[-6px] xl:mt-0">
-      <HaveSpinner hideSpinner={loadingSuccessful}>
+      <HaveSpinner hideSpinner={loadingSuccess}>
         <>
           <section
             style={{
@@ -263,56 +260,63 @@ function Home() {
             <h1 className="mb-14 mt-12 text-center font-sans text-5xl font-bold">
               Sản Phẩm
             </h1>
-            <div className="flex flex-col items-center px-2 font-sans xl:px-40">
-              <Tabs
-                key="tabs"
-                variant="bordered"
-                radius="full"
-                color="primary"
-                className="block w-full"
-                onSelectionChange={(selectedId) =>
-                  handleSelectionChange(selectedId)
-                }
-              >
-                {categories.map((category, index) => (
-                  <Tab
-                    key={index}
-                    id={category.idBicycleCategory}
-                    title={category.name}
-                    className="mx-2 p-2 text-sm font-bold"
+            <HaveSpinner hideSpinner={categories.length !== 0}>
+              <div className="flex flex-col items-center px-2 font-sans xl:px-40">
+                <Tabs
+                  key="tabs"
+                  variant="bordered"
+                  radius="full"
+                  color="primary"
+                  className="block w-full"
+                  onSelectionChange={(selectedId) =>
+                    handleSelectionChange(selectedId)
+                  }
+                >
+                  {categories.map((category, index) => (
+                    <Tab
+                      key={index}
+                      id={category.idBicycleCategory}
+                      title={category.name}
+                      className="mx-2 p-2 text-sm font-bold"
+                    >
+                      <div className="relative flex min-h-[400px] w-full flex-wrap">
+                        {loadingBicycle &&
+                          bicyclesOfCategory.map((bicycle, index) => (
+                            <div
+                              key={index}
+                              ref={bicycleRefs.current[index]}
+                              className={clsx(
+                                "my-4 w-full px-2 lg:w-1/2  lg:px-4 xl:w-1/3",
+                                {
+                                  "translate-y-36 opacity-0":
+                                    !isViewedBicycles.includes(index),
+                                },
+                              )}
+                            >
+                              <ProductCard bicycle={bicycle} />
+                            </div>
+                          ))}
+                        {!loadingBicycle && (
+                          <Spinner
+                            color="warning"
+                            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                          />
+                        )}
+                      </div>
+                    </Tab>
+                  ))}
+                </Tabs>
+                {loadingBicycle && (
+                  <Link
+                    to={`/category/${categoryChecked}`}
+                    className="rounded-lg bg-pri px-4 py-1 text-sm font-bold text-white"
                   >
-                    <div className="relative flex min-h-[400px] w-full flex-wrap">
-                      {loadingBicycle &&
-                        bicyclesOfCategory.map((bicycle, index) => (
-                          <div
-                            ref={bicycleRefs.current[index]}
-                            className={clsx(
-                              "my-4 w-full px-2 lg:px-4  lg:w-1/2 xl:w-1/3",
-                              {
-                                "translate-y-36 opacity-0":
-                                  !isViewedBicycles.includes(index),
-                              },
-                            )}
-                          >
-                            <ProductCard bicycle={bicycle} />
-                          </div>
-                        ))}
-                      {!loadingBicycle && (
-                        <Spinner
-                          color="warning"
-                          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                        />
-                      )}
-                    </div>
-                  </Tab>
-                ))}
-              </Tabs>
-              {loadingBicycle && (
-                <Link to={`/category/${categoryChecked}`} className="text-sm text-white bg-pri px-4 py-1 rounded-lg font-bold">Xem tất cả</Link>
-              )}
-            </div>
+                    Xem tất cả
+                  </Link>
+                )}
+              </div>
+            </HaveSpinner>
           </section>
-
           <section
             style={{
               backgroundImage: `url(${require("~/assets/images/about_us/about_us-2.jpg")})`,
@@ -331,8 +335,9 @@ function Home() {
             <div className="mt-16 flex w-full flex-wrap px-4 md:px-20 lg:px-52">
               {brand_data.map((item, index) => (
                 <div
+                  key={index}
                   ref={brandRefs.current[index]}
-                  className="mb-5 w-full translate-y-12 px-12 py-4 opacity-0 md:mb-0 md:w-1/3"
+                  className="mb-5 w-full translate-y-12 px-12 py-4 opacity-0 md:mb-0  md:w-1/3"
                 >
                   <div className="flex flex-col items-center">
                     <FontAwesomeIcon
